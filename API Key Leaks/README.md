@@ -146,7 +146,7 @@ verification*[OUT]* | -process
 then, [会话状态识别!]
 };
 ```
-(SSI)
+>Integrate Internet Security(IIS)
 ```
 +++Requirements
 * machineKey **validationKey** and **decryptionKey**
