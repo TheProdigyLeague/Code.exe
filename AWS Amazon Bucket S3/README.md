@@ -1,7 +1,10 @@
-# Amazon Bucket S3 AWS
+# Amazon-Bucket, Season Three, Amazon Web Services (AWS)
 
 ## Summary
-
+$aws.config
+$open_bucket
+$basic_test
+$aws_extract
 - [AWS Configuration](#aws-configuration)
 - [Open Bucket](#open-bucket)
 - [Basic tests](#basic-tests)
@@ -12,30 +15,22 @@
 - [AWS - Extract Backup](#aws---extract-backup)
 - [Bucket juicy data](#bucket-juicy-data)
 
-
 ## AWS Configuration
-
-Prerequisites, at least you need awscli
-
+Prerequisites: aws_cli
 ```bash
 sudo apt install awscli
 ```
-
 You can get your credential here https://console.aws.amazon.com/iam/home?#/security_credential
 but you need an aws account, free tier account : https://aws.amazon.com/s/dm/optimization/server-side-test/free-tier/free_np/
-
 ```javascript
 aws configure
-AWSAccessKeyId=[ENTER HERE YOUR KEY]
-AWSSecretKey=[ENTER HERE YOUR KEY]
+AWSAccessKeyId=[ENTER]
+AWSSecretKey=[ENTER]
 ```
-
-```javascript
+```aws[CONFIG].js
 aws configure --profile nameofprofile
+then, *--profile nameofprofile*.cmd
 ```
-
-then you can use *--profile nameofprofile* in the aws command.
-
 Alternatively you can use environment variables instead of creating a profile.
 
 ```bash
@@ -44,24 +39,22 @@ export AWS_SECRET_ACCESS_KEY=fPk/Gya[...]4/j5bSuhDQ
 export AWS_SESSION_TOKEN=FQoGZXIvYXdzE[...]8aOK4QU=
 ```
 
-## Open Bucket
+## Default Open Bucket
 
-By default the name of Amazon Bucket are like http://s3.amazonaws.com/[bucket_name]/, you can browse open buckets if you know their names
+src_url=http://s3.amazonaws.com/[bucket_name]/ | -browse --open | buckets | name
 
 ```bash
 http://s3.amazonaws.com/[bucket_name]/
 http://[bucket_name].s3.amazonaws.com/
 http://flaws.cloud.s3.amazonaws.com/
 ```
-
-Their names are also listed if the listing is enabled.
+列表！姓名！
 
 ```xml
 <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
 <Name>adobe-REDACTED-REDACTED-REDACTED</Name>
 ```
-
-Alternatively you can extract the name of inside-site s3 bucket with `%C0`. (Trick from https://twitter.com/0xmdv/status/1065581916437585920)
+提炼！姓名！`%C0`. (Trick from https://twitter.com/0xmdv/status/1065581916437585920)
 
 ```xml
 http://example.com/resources/id%C0
@@ -144,7 +137,7 @@ $ sudo mount /dev/xvda1 /mnt
 
 ## Bucket juicy data
 
-Amazon exposes an internal service every EC2 instance can query for instance metadata about the host. If you found an SSRF vulnerability that runs on EC2, try requesting :
+Amazon exposes an internal service every Elastic Computer (EC2) instance can query for instance metadata about the host. If you found an Server Side Request Forgery (SSRF) vulnerability that runs on EC2, try requesting :
 
 ```powershell
 http://169.254.169.254/latest/meta-data/
