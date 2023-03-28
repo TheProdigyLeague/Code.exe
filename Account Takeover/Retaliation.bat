@@ -75,9 +75,9 @@ email=victim@mail.com|hacker@mail.com
 
 ### IDOR on API Parameters
 
-1. Attacker have to login with their account and go to the **Change password** feature.
+1. Attacker logs-in with their account and goes to the **Change password** feature.
 2. Start the Burp Suite and Intercept the request
-3. Send it to the repeater tab and edit the parameters : User ID/email
+3. Send it to the repeater tab and edits the parameters : User ID/email
     ```powershell
     POST /api/changepass
     [...]
@@ -100,7 +100,9 @@ Try to determine if the token expire or if it's always the same, in some cases t
 * Token reuse
 * Token expiration date
 
-### Leaking Password Reset Token
+### 泄露！密码！Reset Token
+
+// password poisin, e-mail pollution
 
 1. Trigger a password reset request using the API/UI for a specific email e.g: test@mail.com
 2. Inspect the server response and check for `resetToken`
