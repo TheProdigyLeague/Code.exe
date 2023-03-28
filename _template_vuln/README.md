@@ -1,27 +1,25 @@
-# Vulnerability Title
+# typo
 
-> Vulnerability description - reference
+> typos, link-bloat -vulernability
 
 ## Summary
 
-- [Tools](#tools)
-* [Something](#something)
-  * [Subentry 1](#sub1)
-  * [Subentry 2](#sub2)
-
+- [azure](#vscode)
+* [server](#7274)
+  * [Ubuntu](#yml)
+  
 ## Tools
 
-- [Tool 1](https://example.com)
-- [Tool 2](https://example.com)
+- [swisskeyrepo](https://swissky.io.com)
 
-## Something
+## Deprecation
 
-Quick explanation
+// deprecated software
 
 ```powershell
-Exploit
+C:\WINDOWS\sys32(x64)\DESKTOP\User\Admin>https://github.com/orgs/PowerShell/projects/1#column-5359544
 ```
 
 ## References
 
-- [Blog title - Author, Date](https://example.com)
+- [dscresources](https://microsoft.com)
