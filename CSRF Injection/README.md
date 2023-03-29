@@ -1,10 +1,7 @@
 # Cross-Site Request Forgery
-
-> Cross-Site Request Forgery (CSRF/XSRF) is an attack that forces an end user to execute unwanted actions on a web application in which they're currently authenticated. CSRF attacks specifically target state-changing requests, not theft of data, since the attacker has no way to see the response to the forged request. - OWASP
-
-
+> a.k.a XSRF is an attack that forces an end-user to execute unwanted actions on a web application in which they're currently authenticated. 
+> CSRF attacks specifically target state-changing requests, not theft of data, since the attacker has no way to see the response to the forged request. - OWASP
 ## Summary
-
 * [Methodology](#methodology)
 * [Payloads](#payloads)
     * [HTML GET - Requiring User Interaction](#html-get---requiring-user-interaction)
@@ -20,17 +17,12 @@
     * [With semicolon payload](#with-semicolon-payload)
     * [With subdomain payload](#with-subdomain-payload)
 * [References](#references)
-
 ## Tools
-
 * [XSRFProbe - The Prime Cross Site Request Forgery Audit and Exploitation Toolkit.](https://github.com/0xInfection/XSRFProbe)
-
 ## Methodology
-
 ![CSRF_cheatsheet](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/CSRF%20Injection/Images/CSRF-CheatSheet.png?raw=true)
-
 ## Payloads
-
+&&Very%Important#Information(VII)
 When you are logged in to a certain site, you typically have a session. The identifier of that session is stored in a cookie in your browser, and is sent with every request to that site. Even if some other site triggers a request, the cookie is sent along with the request and the request is handled as if the logged in user performed it.
 
 ### HTML GET - Requiring User Interaction
@@ -66,8 +58,6 @@ When you are logged in to a certain site, you typically have a session. The iden
  document.getElementById("autosubmit").submit();
 </script>
 ```
-
-
 ### JSON GET - Simple Request
 
 ```html
@@ -121,7 +111,6 @@ Referer: https://attacker.com/csrf.html
 
 Referer: https://attacker.com/csrf.html?trusted.domain.com
 ```
-
 ### With semicolon(`;`) payload
 ```
 1) Open https://attacker.com/csrf.html;trusted.domain.com
@@ -129,7 +118,6 @@ Referer: https://attacker.com/csrf.html?trusted.domain.com
 
 Referer: https://attacker.com/csrf.html;trusted.domain.com
 ```
-
 ### With subdomain payload
 ```
 1) Open https://trusted.domain.com.attacker.com/csrf.html
