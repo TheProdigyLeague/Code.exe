@@ -1,15 +1,16 @@
-# Insecure Deserialization
+# Insecure De-serialization
 
-> Serialization is the process of turning some object into a data format that can be restored later. People often serialize objects in order to save them to storage, or to send as part of communications. Deserialization is the reverse of that process -- taking data structured from some format, and rebuilding it into an object - OWASP
-
-Check the following sub-sections, located in other files :
+> Serialization is the process of turning some object into a data format that can be restored later. (OS.FS)
+> Machines serialize objects in order to save them to storage. or Humans send them as a part of communications. 
+> De-serialization is the reverse of that reserve -- taking data structured from some format, and rebuilding it into an object - OWASP
+## Check the following sub-sections, located in other files :
 
 * [Java deserialization : ysoserial, ...](Java.md)
 * [PHP (Object injection) : phpggc, ...](PHP.md)
 * [Ruby : universal rce gadget, ...](Ruby.md)
 * [Python : pickle, ...](Python.md)
 
-## References
+### References
 
 * [Github - ysoserial](https://github.com/frohoff/ysoserial)
 * [Github - ysoserial.net](https://github.com/pwntester/ysoserial.net)
