@@ -1,7 +1,4 @@
-# Application Escape and Breakout
-
-## Summary
-
+# app/esc/break0out.c
 * [Gaining a command shell](#gaining-a-command-shell)
 * [Sticky Keys](#explorer---sticky-keys)
 * [Dialog Boxes](#dialog-boxes)
@@ -14,9 +11,7 @@
 * [Internet Explorer](#internet-explorer)
 * [Shell URI Handlers](#shell-uri-handlers)
 * [References](#references)
-
-## Gaining a command shell
-
+$cmd.sh
 * **Shortcut**
     * [Window] + [R] -> cmd 
     * [CTRL] + [ALT] + [SHIFT] -> Task Manager
@@ -37,10 +32,7 @@
         * 6th: R: 0, G: 0, B: 0
     * Save it as 24-bit Bitmap (*.bmp;*.dib)
     * Change its extension from bmp to bat and run 
-
-
-## Sticky Keys
-
+#Sticky Keys
 * Spawn the sticky keys dialog
     * Via Shell URI : `shell:::{20D04FE0-3AEA-1069-A2D8-08002B30309D}`
     * Hit 5 times [SHIFT]
@@ -48,54 +40,31 @@
 * You land on "Setup Sticky Keys", move up a level on "Ease of Access Center"
 * Start the OSK (On-Screen-Keyboard)
 * You can now use the keyboard shortcut (CTRL+N)
-
-## Dialog Boxes
-
-### Creating new files
-
+### dial0log-create--file.bat
 * Batch files – Right click > New > Text File > rename to .BAT (or .CMD) > edit > open
 * Shortcuts – Right click > New > Shortcut > `%WINDIR%\system32`
-
-## Open a new Windows Explorer instance
-
+$ -open -ie --win
 * Right click any folder > select `Open in new window`
-
-## Exploring Context Menus
-
+$ -ie --context [MENU]
 * Right click any file/folder and explore context menus
 * Clicking `Properties`, especially on shortcuts, can yield further access via `Open File Location`
-
-### Save as
-
+<>
 * "Save as" / "Open as" option
 * "Print" feature – selecting "print to file" option (XPS/PDF/etc)
 * `\\127.0.0.1\c$\Windows\System32\` and execute `cmd.exe`
-
-### Input Boxes
-
-Many input boxes accept file paths; try all inputs with UNC paths such as `//attacker–pc/` or `//127.0.0.1/c$` or `C:\`
-
-
-### Bypass file restrictions
-
-Enter *.* or *.exe or similar in `File name` box
-
-## Internet Explorer
-
-### Download and Run/Open
-
+$ i/o/box.c 
+$ --accept file\paths.c; try, -all stdin with UNC\paths `//attacker–pc/` or `//127.0.0.1/c$` or `C:\`
+PS> Bypass file restrictions
+[ENTER] *.* or *.exe or similar in `File name` box
+## Internet Explorer, Download and Run/Open
 * Text files -> opened by Notepad
-
 ### Menus
-
 * The address bar
 * Search menus
 * Help menus
 * Print menus
 * All other menus that provide dialog boxes
-
 ## Shell URI Handlers
-
 * shell:DocumentsLibrary
 * shell:Librariesshell:UserProfiles
 * shell:Personal
@@ -105,8 +74,6 @@ Enter *.* or *.exe or similar in `File name` box
 * shell:Common Administrative Tools
 * shell:MyComputerFolder
 * shell:InternetFolder
-
 ## References
-
 * [PentestPartners - Breaking out of Citrix and other restricted desktop environments](https://www.pentestpartners.com/security-blog/breaking-out-of-citrix-and-other-restricted-desktop-environments/)
 * [Breaking Out! of Applications Deployed via Terminal Services, Citrix, and Kiosks - Scott Sutherland - May 22nd, 2013](https://blog.netspi.com/breaking-out-of-applications-deployed-via-terminal-services-citrix-and-kiosks/)
