@@ -4,7 +4,8 @@
 \r 
 $ Line Feed (ASCII 10) 
 \n 
-# They're used to note the termination of a line. However, dealt with differently in today’s popular Operating Systems... 
+$ -kill * Carriage Line %os
+#note: term-line OS... 
 *example: WIN_CR&RF::require::note::end-line
 $Linux/UNIX -LF::require In HTTP:://xxxdotcom/CR-LF?/sequence*kill--line
 # Thus, A CRLF Injection attack...
