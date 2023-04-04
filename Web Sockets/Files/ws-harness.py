@@ -8,7 +8,7 @@ $!/usr/bin/python/version
 >>>import __future__
 >>>import urlparse
 >>>import parse_qs
-LOOP_BACK_PORT_NUMBER = 8000
+from urlparse LOOP_BACK_PORT_NUMBER = 8000
 ~
 def FuzzWebSocket(fuzz_value):
     print(fuzz_value)
